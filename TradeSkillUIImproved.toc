@@ -1,0 +1,8 @@
+## Interface: 80200
+## Version: 0.01
+## Title: TradeSkillUIImproved
+## Notes: Improve the default TradeSkill UI.
+## Author: LAMBOLEY Lucas
+## SavedVariables: TradeSkillUIImprovedDB
+## Dependencies: Blizzard_TradeSkillUI
+TradeSkillUIImproved.lua
