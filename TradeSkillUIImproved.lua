@@ -1,3 +1,6 @@
+local _, L = ...
+--print(L["Hello World!"]);
+
 if IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
 
 TradeSkillFrame.DetailsFrame.ExitButton:Hide()
