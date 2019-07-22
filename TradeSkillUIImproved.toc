@@ -1,8 +1,8 @@
 ## Interface: 80200
-## Version: 0.01
+## Version: 1.0
 ## Title: TradeSkillUIImproved
 ## Notes: Improve the default TradeSkill UI.
-## Notes-frFR: Améliore l'interface utilisateur par défaut des métiers.
+## Notes-frFR: Améliore l'interface des métiers.
 ## Author: LAMBOLEY Lucas
 ## SavedVariables: TradeSkillUIImprovedDB
 ## Dependencies: Blizzard_TradeSkillUI
