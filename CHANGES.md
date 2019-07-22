@@ -6,6 +6,7 @@ Changelog
 ------------------
 
 - Add two checkbox for 'Have materials' and 'Has skill up'.
+- Move RankFrame and FilterButton.
 - Fix the error when no recipe are selected and you press the 'recipeID' button.
 - Fix the default position of the frame in the middle left.
 - Fix some grammatical mistakes. 
