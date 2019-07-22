@@ -1,5 +1,4 @@
 local _, L = ...
---https://wowwiki.fandom.com/wiki/Localizing_an_addon
 
 if IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
 
@@ -67,32 +66,32 @@ local function TradeSkillUIImproved_SlashCmd(msg, editbox)
         C_TradeSkillUI.GetRecipeInfo(tonumberArgs, recipeInfo)
 
         if IsInTable(TradeSkillUIImprovedDB.BlackList, tonumberArgs) then
-            TradeSkillUIImproved_Print('Le recipeID |cffffff00' .. args .. '|r est déjà dans la blacklist.')
+            TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["is already in the blacklist."])
         else
             table.insert(TradeSkillUIImprovedDB.BlackList, { recipeID = recipeInfo.recipeID, name = recipeInfo.name })
-            TradeSkillUIImproved_Print('Le recipeID |cffffff00' .. args .. '|r a été ajouté dans la blacklist.')
+            TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["has been added in the blacklist."])
         end
     elseif cmd == 'delBL' and args ~= '' then
         local idElement = IsInTable(TradeSkillUIImprovedDB.BlackList, tonumber(args))
 
         if idElement then
             table.remove(TradeSkillUIImprovedDB.BlackList, idElement)
-            TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. "|r a été supprimé de la blacklist.")
+            TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["has been removed from the blacklist."])
         else
-            TradeSkillUIImproved_Print('Le recipeID |cffffff00' .. args .. "|r n'est pas dans la blacklist, il n'y a donc rien à enlever.")
+            TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["is not in the blacklist, there is nothing to remove."])
         end
     elseif cmd == 'showBL' then
         if #TradeSkillUIImprovedDB.BlackList == 0 then
-            TradeSkillUIImproved_Print('La blacklist est vide.')
+            TradeSkillUIImproved_Print(L["The blacklist is empty."])
         elseif args == '' then
-            TradeSkillUIImproved_Print('Contenu de la blacklist :')
-                print('  index,recipeID,name')
+            TradeSkillUIImproved_Print(L["Content of the blacklist :"])
+                print('  index,recipeID,recipeName')
             for i, recipeIDTable in ipairs(TradeSkillUIImprovedDB.BlackList) do
                 print('  ' .. i .. ',' .. recipeIDTable.recipeID .. ',' .. recipeIDTable.name)
             end
         else
-            TradeSkillUIImproved_Print("Contenu de la blacklist avec le pattern '" .. args .. "' :")
-            print('  index,recipeID,name')
+            TradeSkillUIImproved_Print(L["Content of the blacklist with the pattern"] .. " '" .. args .. "' :")
+            print('  index,recipeID,recipeName')
             for i, recipeIDTable in ipairs(TradeSkillUIImprovedDB.BlackList) do
                 if string.match(recipeIDTable.recipeID, args) or string.match(recipeIDTable.name, args) then
                     print('  ' .. i .. ',' .. recipeIDTable.recipeID .. ',' .. recipeIDTable.name)
@@ -101,26 +100,26 @@ local function TradeSkillUIImproved_SlashCmd(msg, editbox)
         end
     elseif cmd == 'isBL' and args ~= '' then
         if IsInTable(TradeSkillUIImprovedDB.BlackList, tonumber(args)) then
-            TradeSkillUIImproved_Print('Le recipeID |cffffff00' .. args .. '|r est dans la blacklist.')
+            TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["is in the blacklist."])
         else
-            TradeSkillUIImproved_Print('Le recipeID |cffffff00' .. args .. "|r n'est pas dans la blacklist.")
+            TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["isn't in the blacklist."])
         end
     elseif cmd == 'getSize'then
-        TradeSkillUIImproved_Print("Le multiplicateur de taille est à |cffffff00" .. TradeSkillUIImprovedDB.size .. "|r.")
+        TradeSkillUIImproved_Print(L["The coefficient of the size is"] .. ' |cffffff00' .. TradeSkillUIImprovedDB.size .. "|r.")
     elseif cmd == 'setSize' and args ~= '' then
         TradeSkillUIImprovedDB.size = args
-        TradeSkillUIImproved_Print("Le multiplicateur de taille a été placé à |cffffff00" .. TradeSkillUIImprovedDB.size .. "|r. Un rechargement de l'interface est |cffffff00nécéssaire|r pour éviter tout bug d'affichage.")
+        TradeSkillUIImproved_Print(L["The coefficient of the size has been set to"] .. ' |cffffff00' .. TradeSkillUIImprovedDB.size .. '|r. ' .. L["A reload is |cffffff00necessary|r."])
     elseif cmd == 'version' then
-        TradeSkillUIImproved_Print("La version de l'addon est |cffffff00" .. TradeSkillUIImproved.version .. '|r.')
+        TradeSkillUIImproved_Print(L["The version of the addon is"] .. ' |cffffff00' .. TradeSkillUIImproved.version .. '|r.')
     else
-        TradeSkillUIImproved_Print('Arguments :')
-        print("  |cfffff194addBL|r - Ajoute un recipeID dans la blacklist.")
-        print("  |cfffff194delBL|r - Supprime le recipeID de la blacklist.")
-        print("  |cfffff194showBL [sous-chaîne]|r - Affiche le contenu de la blacklist. Si un argument est passé, un pattern sensible à la casse sera fait sur le recipeID et le nom.")
-        print("  |cfffff194isBL|r - Affiche si le recipeID est dans la blacklist.")
-        print("  |cfffff194getSize|r - Affiche la valeur du multiplicateur de taille.")
-        print("  |cfffff194setSize|r - Modifie la valeur du multiplicateur de taille. Un rechargement de l'interface est nécessaire.")
-        print("  |cfffff194version|r - Affiche la version de l'addon")
+        TradeSkillUIImproved_Print(L["Arguments :"])
+        print('  |cfffff194addBL|r - ' .. L["Add a recipeID in the blacklist."])
+        print('  |cfffff194delBL|r - ' .. L["Delete the recipeID  from the blacklist."])
+        print('  |cfffff194showBL [' .. L["substring"] .. ']|r - ' .. L["Show the data of the blacklist. If an argument is passed, a pattern case-sensitive while be executed on the recipeID and the name."])
+        print('  |cfffff194isBL|r - ' .. L["Show if the recipeID is in the blacklist."])
+        print('  |cfffff194getSize|r - ' .. L["Show the coefficient of the size."])
+        print('  |cfffff194setSize|r - ' .. L["Change the coefficient of the size. A reload while be necessary."])
+        print('  |cfffff194version|r - ' .. L["Show the version fo the addon."])
     end
 end
 
@@ -191,7 +190,7 @@ TradeSkillUIImproved_SelectedRecipeIDButton:SetHeight(22)
 TradeSkillUIImproved_SelectedRecipeIDButton:ClearAllPoints()
 TradeSkillUIImproved_SelectedRecipeIDButton:SetPoint('BOTTOMRIGHT', TradeSkillFrame.DetailsFrame.CreateButton, 'BOTTOMRIGHT', 85, 0)
 TradeSkillUIImproved_SelectedRecipeIDButton:SetScript('OnClick', function()
-    TradeSkillUIImproved_Print('Le recipeID selectionné est |cffffff00' .. TradeSkillFrame.RecipeList.selectedRecipeID .. '|r.')
+    TradeSkillUIImproved_Print(L["The selected recipeID is"] .. ' |cffffff00' .. TradeSkillFrame.RecipeList.selectedRecipeID .. '|r.')
 end)
 
 local TradeSkillUIImproved_MoveFrame = CreateFrame('Button', nil, TradeSkillFrame)
