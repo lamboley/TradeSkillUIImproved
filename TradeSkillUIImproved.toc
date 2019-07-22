@@ -6,5 +6,5 @@
 ## Author: LAMBOLEY Lucas
 ## SavedVariables: TradeSkillUIImprovedDB
 ## Dependencies: Blizzard_TradeSkillUI
-locale\locale.xml
+localization\localization.xml
 TradeSkillUIImproved.lua
