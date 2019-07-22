@@ -25,4 +25,5 @@ if GetLocale() == "frFR" then
     L["Change the coefficient of the size. A reload while be necessary."] = "Modifie la valeur du multiplicateur de taille. Un rechargement de l'interface est nécessaire."
     L["Show the version fo the addon."] = "Affiche la version de l'addon."
     L["The selected recipeID is"] = "Le recipeID selectionné est"
+    L["No recipe is selected."] = "Aucune recette n'est séléctionnée."
 end
