@@ -1,5 +1,4 @@
 local _, L = ...
---print(L["Hello World!"]);
 --https://wowwiki.fandom.com/wiki/Localizing_an_addon
 
 if IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
@@ -78,7 +77,7 @@ local function TradeSkillUIImproved_SlashCmd(msg, editbox)
 
         if idElement then
             table.remove(TradeSkillUIImprovedDB.BlackList, idElement)
-            TradeSkillUIImproved_Print('Le recipeID |cffffff00' .. args .. "|r a été supprimé de la blacklist.")
+            TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. "|r a été supprimé de la blacklist.")
         else
             TradeSkillUIImproved_Print('Le recipeID |cffffff00' .. args .. "|r n'est pas dans la blacklist, il n'y a donc rien à enlever.")
         end
