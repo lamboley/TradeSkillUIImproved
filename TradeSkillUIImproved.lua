@@ -112,7 +112,7 @@ local function TradeSkillUIImproved_SlashCmd(msg, editbox)
     else
         TradeSkillUIImproved_Print('Arguments :')
         print("  |cfffff194addBL|r - Ajoute un recipeID dans la blacklist.")
-        print("  |cfffff194removeBL|r - Supprime le recipeID de la blacklist.")
+        print("  |cfffff194delBL|r - Supprime le recipeID de la blacklist.")
         print("  |cfffff194showBL [sous-chaîne]|r - Affiche le contenu de la blacklist. Si un argument est passé, un pattern sensible à la casse sera fait sur le recipeID et le nom.")
         print("  |cfffff194isBL|r - Affiche si le recipeID est dans la blacklist.")
         print("  |cfffff194getSize|r - Affiche la valeur du multiplicateur de taille.")
