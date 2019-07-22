@@ -2,6 +2,7 @@
 ## Version: 0.01
 ## Title: TradeSkillUIImproved
 ## Notes: Improve the default TradeSkill UI.
+## Notes-frFR: Améliore l'interface utilisateur par défaut des métiers.
 ## Author: LAMBOLEY Lucas
 ## SavedVariables: TradeSkillUIImprovedDB
 ## Dependencies: Blizzard_TradeSkillUI
