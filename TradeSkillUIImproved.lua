@@ -190,7 +190,12 @@ TradeSkillUIImproved_SelectedRecipeIDButton:SetHeight(22)
 TradeSkillUIImproved_SelectedRecipeIDButton:ClearAllPoints()
 TradeSkillUIImproved_SelectedRecipeIDButton:SetPoint('BOTTOMRIGHT', TradeSkillFrame.DetailsFrame.CreateButton, 'BOTTOMRIGHT', 85, 0)
 TradeSkillUIImproved_SelectedRecipeIDButton:SetScript('OnClick', function()
-    TradeSkillUIImproved_Print(L["The selected recipeID is"] .. ' |cffffff00' .. TradeSkillFrame.RecipeList.selectedRecipeID .. '|r.')
+    local recipeID = TradeSkillFrame.RecipeList.selectedRecipeID
+    if recipeID ~= nil then
+        TradeSkillUIImproved_Print(L["The selected recipeID is"] .. ' |cffffff00' .. recipeID .. '|r.')
+    else
+        TradeSkillUIImproved_Print(L["No recipe is selected."])
+    end
 end)
 
 local TradeSkillUIImproved_MoveFrame = CreateFrame('Button', nil, TradeSkillFrame)
