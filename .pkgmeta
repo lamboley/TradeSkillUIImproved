@@ -1,0 +1,5 @@
+package-as: TradeSkillUIImproved
+
+manual-changelog:
+    filename: CHANGES.md
+    markup-type: markdown
