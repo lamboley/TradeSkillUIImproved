@@ -114,11 +114,11 @@ local function TradeSkillUIImproved_SlashCmd(msg, editbox)
     else
         TradeSkillUIImproved_Print(L["Arguments :"])
         print('  |cfffff194addBL|r - ' .. L["Add a recipeID in the blacklist."])
-        print('  |cfffff194delBL|r - ' .. L["Delete the recipeID  from the blacklist."])
+        print('  |cfffff194delBL|r - ' .. L["Delete the recipeID from the blacklist."])
         print('  |cfffff194showBL [' .. L["substring"] .. ']|r - ' .. L["Show the data of the blacklist. If an argument is passed, a pattern case-sensitive while be executed on the recipeID and the name."])
         print('  |cfffff194isBL|r - ' .. L["Show if the recipeID is in the blacklist."])
         print('  |cfffff194getSize|r - ' .. L["Show the coefficient of the size."])
-        print('  |cfffff194setSize|r - ' .. L["Change the coefficient of the size. A reload while be necessary."])
+        print('  |cfffff194setSize|r - ' .. L["Change the coefficient of the size. A reload will be necessary."])
         print('  |cfffff194version|r - ' .. L["Show the version fo the addon."])
     end
 end
