@@ -1,5 +1,6 @@
 local _, L = ...
 --print(L["Hello World!"]);
+--https://wowwiki.fandom.com/wiki/Localizing_an_addon
 
 if IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
 
