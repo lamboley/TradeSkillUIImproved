@@ -2,11 +2,7 @@ local _, L = ...
 
 if IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
 
-TradeSkillFrame.DetailsFrame.ExitButton:Hide()
-TradeSkillFrame.SearchBox:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 163, -60)
-TradeSkillFrame.SearchBox:SetWidth(97)
-
-TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or { size = 55, x = 1032, y = 151, BlackList = {} }
+TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or { size = 55, x = 200, y = 1050, BlackList = {} }
 
 local function TradeSkillUIImproved_Print(msg)
     print('|cff00ff00TSUII|r: ' .. msg)
@@ -39,6 +35,9 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event, ...)
         TradeSkillFrame.DetailsInset:SetHeight(TradeSkillUIImprovedDB.size * 16 - 10)
         TradeSkillFrame.DetailsFrame:SetHeight(TradeSkillUIImprovedDB.size * 16 - 15)
         TradeSkillFrame.DetailsFrame.Background:SetHeight(TradeSkillUIImprovedDB.size * 16 - 17)
+        TradeSkillFrame.DetailsFrame.ExitButton:Hide()
+        TradeSkillFrame.SearchBox:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 163, -60)
+        TradeSkillFrame.SearchBox:SetWidth(97)
 
         if TradeSkillFrame.RecipeList.FilterBar:IsVisible() then
             TradeSkillFrame.RecipeList:SetHeight(TradeSkillUIImprovedDB.size * 16 - 11)
