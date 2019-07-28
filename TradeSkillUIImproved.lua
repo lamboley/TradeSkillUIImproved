@@ -69,10 +69,14 @@ local function TradeSkillUIImproved_SlashCmd(msg, editbox)
         local recipeInfo = {}
         C_TradeSkillUI.GetRecipeInfo(tonumberArgs, recipeInfo)
 
+        if recipeInfo.name == nil then
+            C_TradeSkillUI.GetCategoryInfo(tonumberArgs, recipeInfo)
+        end
+
         if IsInTable(TradeSkillUIImprovedDB.BlackList, tonumberArgs) then
             TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["is already in the blacklist."])
         else
-            table.insert(TradeSkillUIImprovedDB.BlackList, { recipeID = recipeInfo.recipeID, name = recipeInfo.name })
+            table.insert(TradeSkillUIImprovedDB.BlackList, { recipeID = (recipeInfo.recipeID or recipeInfo.categoryID), name = recipeInfo.name })
             TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["has been added in the blacklist."])
         end
     elseif cmd == 'delBL' and args ~= '' then
@@ -85,22 +89,26 @@ local function TradeSkillUIImproved_SlashCmd(msg, editbox)
             TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["is not in the blacklist, there is nothing to remove."])
         end
     elseif cmd == 'showBL' then
-        if #TradeSkillUIImprovedDB.BlackList == 0 then
-            TradeSkillUIImproved_Print(L["The blacklist is empty."])
-        elseif args == '' then
-            TradeSkillUIImproved_Print(L["Content of the blacklist :"])
-                print('  index,recipeID,recipeName')
-            for i, recipeIDTable in ipairs(TradeSkillUIImprovedDB.BlackList) do
-                print('  ' .. i .. ',' .. recipeIDTable.recipeID .. ',' .. recipeIDTable.name)
-            end
-        else
-            TradeSkillUIImproved_Print(L["Content of the blacklist with the pattern"] .. " '" .. args .. "' :")
-            print('  index,recipeID,recipeName')
-            for i, recipeIDTable in ipairs(TradeSkillUIImprovedDB.BlackList) do
-                if string.match(recipeIDTable.recipeID, args) or string.match(recipeIDTable.name, args) then
+        if type(TradeSkillUIImprovedDB.BlackList) == 'table' then
+            if #TradeSkillUIImprovedDB.BlackList == 0 then
+                TradeSkillUIImproved_Print(L["The blacklist is empty."])
+            elseif args == '' then
+                TradeSkillUIImproved_Print(L["Content of the blacklist :"])
+                    print('  index,recipeID,recipeName')
+                for i, recipeIDTable in ipairs(TradeSkillUIImprovedDB.BlackList) do
                     print('  ' .. i .. ',' .. recipeIDTable.recipeID .. ',' .. recipeIDTable.name)
                 end
+            else
+                TradeSkillUIImproved_Print(L["Content of the blacklist with the pattern"] .. " '" .. args .. "' :")
+                print('  index,recipeID,recipeName')
+                for i, recipeIDTable in ipairs(TradeSkillUIImprovedDB.BlackList) do
+                    if string.match(recipeIDTable.recipeID, args) or string.match(recipeIDTable.name, args) then
+                        print('  ' .. i .. ',' .. recipeIDTable.recipeID .. ',' .. recipeIDTable.name)
+                    end
+                end
             end
+        else
+            TradeSkillUIImproved_Print(L["The blacklist is empty."])
         end
     elseif cmd == 'isBL' and args ~= '' then
         if IsInTable(TradeSkillUIImprovedDB.BlackList, tonumber(args)) then
@@ -146,10 +154,27 @@ hooksecurefunc(TradeSkillFrame.RecipeList, 'UpdateFilterBar', function(self)
 end)
 
 hooksecurefunc(TradeSkillFrame.RecipeList, 'RebuildDataList', function(self)
-    for i, listData in ipairs(self.dataList) do
-        if IsInTable(TradeSkillUIImprovedDB.BlackList, listData.recipeID) then
-            table.remove(self.dataList, i)
+    if type(TradeSkillUIImprovedDB.BlackList) == 'table' and #TradeSkillUIImprovedDB.BlackList > 0 then
+        for i, listData in ipairs(self.dataList) do
+            if listData.type == 'recipe' and IsInTable(TradeSkillUIImprovedDB.BlackList, listData.recipeID) then
+                table.remove(self.dataList, i)
+            end
+            if listData.type == 'subheader' and IsInTable(TradeSkillUIImprovedDB.BlackList, listData.categoryID) then
+                for subI, subListData in ipairs(self.dataList) do
+                    if subListData.type == 'recipe' and subListData.categoryID == listData.categoryID then
+                        table.remove(self.dataList, subI)
+                    end
+                end
+                table.remove(self.dataList, i)
+            end
+
         end
+    end
+end)
+
+hooksecurefunc(TradeSkillFrame.RecipeList, 'OnHeaderButtonClicked', function(self, _, categoryInfo, mouseButton)
+    if mouseButton == 'RightButton' then
+        TradeSkillUIImproved_Print(L["The clicked categoryID is"] .. ' |cffffff00' .. categoryInfo.categoryID .. '|r.')
     end
 end)
 
