@@ -61,7 +61,6 @@ Print the version of the addon in the chat frame.
 
 ## Localization
 
-Currently supported langage :
 * English (arlaios)
 * French (arlaios)
 
