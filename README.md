@@ -67,7 +67,7 @@ Print the version of the addon in the chat frame.
 ## Bugs know
 
 * Filter check box are not cleaned when you change of profession (will be fixed in v1.0.3).
-* Actually you cannot hide header and subheader, only the recipe can be hided (will be fixed in v1.0.3).
+* Actually you cannot hide header and sub-header, only the recipe can be hided (will be fixed in v1.0.3).
 
 ## Issues
 
