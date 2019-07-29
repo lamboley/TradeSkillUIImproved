@@ -161,6 +161,9 @@ hooksecurefunc(TradeSkillFrame.RecipeList, 'RebuildDataList', function(self)
             end
             if listData.type == 'subheader' and IsInTable(TradeSkillUIImprovedDB.BlackList, listData.categoryID) then
                 for subI, subListData in ipairs(self.dataList) do
+                    if subListData.type == 'subheader' and subListData.parentCategoryID == listData.categoryID then
+                        table.remove(self.dataList, subI)
+                    end
                     if subListData.type == 'recipe' and subListData.categoryID == listData.categoryID then
                         table.remove(self.dataList, subI)
                     end
@@ -172,8 +175,14 @@ hooksecurefunc(TradeSkillFrame.RecipeList, 'RebuildDataList', function(self)
     end
 end)
 
+hooksecurefunc(TradeSkillFrame.RecipeList, 'OnDataSourceChanging', function()
+    TradeSkillUIImproved_CheckButtonHasMaterials:SetChecked(false)
+    TradeSkillUIImproved_CheckButtonHasSkillUp:SetChecked(false)
+end)
+
 hooksecurefunc(TradeSkillFrame.RecipeList, 'OnHeaderButtonClicked', function(self, _, categoryInfo, mouseButton)
     if mouseButton == 'RightButton' then
+        print(categoryInfo.type)
         TradeSkillUIImproved_Print(L["The clicked categoryID is"] .. ' |cffffff00' .. categoryInfo.categoryID .. '|r.')
     end
 end)
