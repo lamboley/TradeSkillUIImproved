@@ -9,16 +9,15 @@ TradeSkillUIImproved improve the default tradeskill UI. His major feature allow 
 * Close the tradeskill UI with the echap key.
 * Add two button for collapse and expand all recipe.
 * Add two checkbox for filter has materials and has skill up.
-* Replace the 'Quit' button by a button which print in chat the id of the selected recipe.
+* Replace the 'Quit' button by a button which print in chat the id of the selected recipe (recipeID).
 * If the addon Auctionator is installed, hide the 'AH' button in the tradeskill UI.
 * Add a system of blacklist of recipe for hidding them in the tradeskill UI.
 
 ## Slash command
 
-### Blacklist
+TradeSkillUIImproved provide 7 slashs commands. 4 of them are used for managing the blacklist database, 2 of them are for controlling the height of the tradeskill UI and the last one is used for displayng the version of the addon.
 
-TradeSkillUIImproved let you hide a specific recipe in the recipe list of the tradeskill UI with the help of a blacklist database.
-There is 4 slashs commands which will help you to use that database (recipeID state for the id of a recipe which can be found with the recipeID button) :
+### Blacklist
 
 ```
 /tsuii addBL recipeID
