@@ -17,8 +17,6 @@ TradeSkillUIImproved improve the default tradeskill UI. His major feature allow 
 
 TradeSkillUIImproved provide 7 slashs commands. 4 of them are used for managing the blacklist database, 2 of them are for controlling the height of the tradeskill UI and the last one is used for displayng the version of the addon.
 
-### Blacklist
-
 ```
 /tsuii addBL recipeID
 ```
@@ -43,8 +41,6 @@ The showBL commande with no argument will print in chat the content of the black
 
 The 'isBL' command will print in chat if the recipe is in the blacklist or not.
 
-### Size of the tradeskill UI
-
 ```
 /tsuii setSize 30
 ```
@@ -56,8 +52,6 @@ Allow to change the height of the tradeskill UI. The default value for the blizz
 ```
 
 Print in chat the value of the height of the tradeskill UI.
-
-### Others
 
 ```
 /tsuii version
