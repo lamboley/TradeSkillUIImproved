@@ -1,6 +1,6 @@
 local _, L = ...
 
-local function defaultFunc(L, key)
+local function defaultFunc(_, key)
     return key
 end
 
