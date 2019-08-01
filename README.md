@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lamboley/TradeSkillUIImproved.svg?branch=master)](https://travis-ci.org/lamboley/TradeSkillUIImproved)
+
 # TradeSkillUIImproved
 
 TradeSkillUIImproved improve the default tradeskill UI. His major feature allow the player to hide recipe in the tradeskill UI.
