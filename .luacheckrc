@@ -20,7 +20,12 @@ globals = {
         "GameMenuFrame",
         "TradeSkillUIImproved_CheckButtonHasMaterials",
         "TradeSkillUIImproved_CheckButtonHasSkillUp",
+        "TradeSkillUIImproved_CheckButtonHasSkillUpText",
+        "TradeSkillUIImproved_CheckButtonHasMaterialsText",
+        "SlashCmdList",
+        "SLASH_TSUII1",
+        "SLASH_TSUII2",
         "CRAFT_IS_MAKEABLE",
         "TRADESKILL_FILTER_HAS_SKILL_UP",
-        "L",
+        "GetLocale",
 }
