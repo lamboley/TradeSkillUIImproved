@@ -61,7 +61,7 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event, ...)
     end
 end)
 
-local function TradeSkillUIImproved_SlashCmd(msg, editbox)
+local function TradeSkillUIImproved_SlashCmd(msg)
     local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)")
 
     if cmd == 'addBL' and args ~= '' then
@@ -180,7 +180,7 @@ hooksecurefunc(TradeSkillFrame.RecipeList, 'OnDataSourceChanging', function()
     TradeSkillUIImproved_CheckButtonHasSkillUp:SetChecked(false)
 end)
 
-hooksecurefunc(TradeSkillFrame.RecipeList, 'OnHeaderButtonClicked', function(self, _, categoryInfo, mouseButton)
+hooksecurefunc(TradeSkillFrame.RecipeList, 'OnHeaderButtonClicked', function(_, _, categoryInfo, mouseButton)
     if mouseButton == 'RightButton' then
         print(categoryInfo.type)
         TradeSkillUIImproved_Print(L["The clicked categoryID is"] .. ' |cffffff00' .. categoryInfo.categoryID .. '|r.')
