@@ -28,7 +28,7 @@ TradeSkillUIImproved:RegisterEvent('PLAYER_LOGIN')
 
 TradeSkillUIImproved.version = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
 
-TradeSkillUIImproved:SetScript('OnEvent', function(_, event, ...)
+TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
     if event == 'PLAYER_LOGIN' then
         TradeSkillFrame:SetHeight(TradeSkillUIImprovedDB.size * 16 + 96)
         TradeSkillFrame.RecipeInset:SetHeight(TradeSkillUIImprovedDB.size * 16 + 10)
@@ -229,7 +229,7 @@ TradeSkillUIImproved_CheckButtonHasMaterialsText:SetText(CRAFT_IS_MAKEABLE)
 TradeSkillUIImproved_CheckButtonHasMaterialsText:SetWidth(110)
 TradeSkillUIImproved_CheckButtonHasMaterialsText:SetJustifyH('LEFT')
 TradeSkillUIImproved_CheckButtonHasMaterials:SetChecked(C_TradeSkillUI.GetOnlyShowMakeableRecipes())
-TradeSkillUIImproved_CheckButtonHasMaterials:SetScript('OnClick', function(self)
+TradeSkillUIImproved_CheckButtonHasMaterials:SetScript('OnClick', function()
     C_TradeSkillUI.SetOnlyShowMakeableRecipes(TradeSkillUIImproved_CheckButtonHasMaterials:GetChecked())
 end)
 
@@ -245,7 +245,7 @@ TradeSkillUIImproved_CheckButtonHasSkillUpText:SetText(TRADESKILL_FILTER_HAS_SKI
 TradeSkillUIImproved_CheckButtonHasSkillUpText:SetWidth(110)
 TradeSkillUIImproved_CheckButtonHasSkillUpText:SetJustifyH('LEFT')
 TradeSkillUIImproved_CheckButtonHasSkillUp:SetChecked(C_TradeSkillUI.GetOnlyShowSkillUpRecipes())
-TradeSkillUIImproved_CheckButtonHasSkillUp:SetScript('OnClick', function(self)
+TradeSkillUIImproved_CheckButtonHasSkillUp:SetScript('OnClick', function()
     C_TradeSkillUI.SetOnlyShowSkillUpRecipes(TradeSkillUIImproved_CheckButtonHasSkillUp:GetChecked())
 end)
 
