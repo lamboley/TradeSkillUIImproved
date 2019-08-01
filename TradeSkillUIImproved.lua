@@ -204,7 +204,7 @@ TradeSkillUIImproved_CollapseButton:SetScript('OnClick', function()
     TradeSkillFrame.RecipeList:Refresh()
 end)
 
-local TradeSkillUIImproved_ExpandButton  = CreateFrame('Button', nil, TradeSkillFrame, 'UIPanelButtonTemplate')
+local TradeSkillUIImproved_ExpandButton = CreateFrame('Button', nil, TradeSkillFrame, 'UIPanelButtonTemplate')
 TradeSkillUIImproved_ExpandButton:SetText('+')
 TradeSkillUIImproved_ExpandButton:SetWidth(20)
 TradeSkillUIImproved_ExpandButton:SetHeight(20)
