@@ -5,4 +5,6 @@ manual-changelog:
     markup-type: markdown
 
 ignore:
- - README.md
+  - .luacheckrc
+  - .travis.yml
+  - README.md
