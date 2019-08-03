@@ -1,76 +1,30 @@
 local _, L = ...
+local countTab = 0
+
+local CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell
+    = CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell
+local GetCategories, GetSubCategories, GetRecipeInfo, GetCategoryInfo
+    = C_TradeSkillUI.GetCategories, C_TradeSkillUI.GetSubCategories, C_TradeSkillUI.GetRecipeInfo, C_TradeSkillUI.GetCategoryInfo
+local CloseTradeSkill, SetOnlyShowMakeableRecipes, SetOnlyShowSkillUpRecipes
+    = C_TradeSkillUI.CloseTradeSkill, C_TradeSkillUI.SetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes
+local TradeSkillFrame, DetailsFrame, FilterButton, RankFrame, SearchBox, RecipeList
+    = TradeSkillFrame, TradeSkillFrame.DetailsFrame, TradeSkillFrame.FilterButton, TradeSkillFrame.RankFrame, TradeSkillFrame.SearchBox, TradeSkillFrame.RecipeList
 
 if IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
 
-TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or { size = 55, x = 200, y = 1050, countTab = 0, BlackList = {} }
+TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or { size = 55, x = 200, y = 1050, BlackList = {} }
 
 local function TradeSkillUIImproved_Print(msg)
     print('|cff00ff00TSUII|r: ' .. msg)
 end
 
 local function IsInTable(l, e)
-    for i,v in pairs(l) do
+    for i, v in pairs(l) do
         if v.recipeID == e then
             return i
         end
     end
     return false
-end
-
-local function updatePosition()
-    UIPanelWindows['TradeSkillFrame'].area = nil
-    TradeSkillFrame:ClearAllPoints()
-    TradeSkillFrame:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', TradeSkillUIImprovedDB.x, TradeSkillUIImprovedDB.y)
-end
-
-local function isCurrentTab(self)
-    if self.tooltip and IsCurrentSpell(self.tooltip) then
-        self:SetChecked(true)
-        self:RegisterForClicks(nil)
-    else
-        self:SetChecked(false)
-        self:RegisterForClicks('AnyDown')
-    end
-end
-
-local function updateTabs(init)
-    local mainTabs = {}
-
-    if init then
-        for i = 1, TradeSkillUIImprovedDB.countTab do
-            local tab = _G['TradeSkillUIImprovedTab' .. i]
-            if tab and tab:IsShown() then
-                tab:Hide()
-                tab:UnregisterEvent('TRADE_SKILL_SHOW')
-                tab:UnregisterEvent('CURRENT_SPELL_CAST_CHANGED')
-            end
-        end
-    end
-
-    for _, professionID in pairs({GetProfessions()}) do
-        local _, _, _, _, _, offset, _, _, _, _ =  GetProfessionInfo(professionID)
-        local _, id = GetSpellBookItemInfo(offset + 1, BOOKTYPE_PROFESSION)
-        tinsert(mainTabs, id)
-    end
-
-    TradeSkillUIImprovedDB.countTab = #mainTabs
-
-    for i, id in pairs(mainTabs) do
-        local name, _, icon = GetSpellInfo(id)
-        local tab = _G['TradeSkillUIImprovedTab' .. i] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. i, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
-        tab:SetScript('OnEvent', isCurrentTab)
-        tab:RegisterEvent('TRADE_SKILL_SHOW')
-        tab:RegisterEvent('CURRENT_SPELL_CAST_CHANGED')
-
-        tab.id = id
-        tab.tooltip = name
-        tab:SetNormalTexture(icon)
-        tab:SetAttribute('type', 'spell')
-        tab:SetAttribute('spell', name)
-        tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * i) + -40)
-        isCurrentTab(tab)
-        tab:Show()
-    end
 end
 
 local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
@@ -84,35 +38,65 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
         TradeSkillFrame:SetHeight(TradeSkillUIImprovedDB.size * 16 + 96)
         TradeSkillFrame.RecipeInset:SetHeight(TradeSkillUIImprovedDB.size * 16 + 10)
         TradeSkillFrame.DetailsInset:SetHeight(TradeSkillUIImprovedDB.size * 16 - 10)
-        TradeSkillFrame.DetailsFrame:SetHeight(TradeSkillUIImprovedDB.size * 16 - 15)
-        TradeSkillFrame.DetailsFrame.Background:SetHeight(TradeSkillUIImprovedDB.size * 16 - 17)
-        TradeSkillFrame.DetailsFrame.ExitButton:Hide()
+        DetailsFrame:SetHeight(TradeSkillUIImprovedDB.size * 16 - 15)
+        DetailsFrame.Background:SetHeight(TradeSkillUIImprovedDB.size * 16 - 17)
+        DetailsFrame.ExitButton:Hide()
         TradeSkillFrame.LinkToButton:SetPoint('BOTTOMRIGHT', TradeSkillFrame, 'TOPRIGHT', -10, -81)
-        TradeSkillFrame.FilterButton:SetPoint('TOPRIGHT', TradeSkillFrame, 'TOPRIGHT', -12, -31)
-        TradeSkillFrame.FilterButton:SetHeight(17)
-        TradeSkillFrame.RankFrame:SetPoint('TOP', TradeSkillFrame, 'TOP', -17, -33)
-        TradeSkillFrame.RankFrame:SetWidth(500)
-        TradeSkillFrame.SearchBox:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 163, -60)
-        TradeSkillFrame.SearchBox:SetWidth(97)
+        FilterButton:SetPoint('TOPRIGHT', TradeSkillFrame, 'TOPRIGHT', -12, -31)
+        FilterButton:SetHeight(17)
+        RankFrame:SetPoint('TOP', TradeSkillFrame, 'TOP', -17, -33)
+        RankFrame:SetWidth(500)
+        SearchBox:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPLEFT', 163, -60)
+        SearchBox:SetWidth(97)
 
-        if TradeSkillFrame.RecipeList.FilterBar:IsVisible() then
-            TradeSkillFrame.RecipeList:SetHeight(TradeSkillUIImprovedDB.size * 16 - 11)
+        if RecipeList.FilterBar:IsVisible() then
+            RecipeList:SetHeight(TradeSkillUIImprovedDB.size * 16 - 11)
         else
-            TradeSkillFrame.RecipeList:SetHeight(TradeSkillUIImprovedDB.size * 16 + 5)
+            RecipeList:SetHeight(TradeSkillUIImprovedDB.size * 16 + 5)
         end
 
-        if #TradeSkillFrame.RecipeList.buttons < floor(TradeSkillUIImprovedDB.size, 0.5) + 2 then
-            local range = TradeSkillFrame.RecipeList.scrollBar:GetValue()
-            HybridScrollFrame_CreateButtons(TradeSkillFrame.RecipeList, 'TradeSkillRowButtonTemplate', 0, 0)
-            TradeSkillFrame.RecipeList.scrollBar:SetValue(range)
+        if #RecipeList.buttons < floor(TradeSkillUIImprovedDB.size, 0.5) + 2 then
+            local range = RecipeList.scrollBar:GetValue()
+            HybridScrollFrame_CreateButtons(RecipeList, 'TradeSkillRowButtonTemplate', 0, 0)
+            RecipeList.scrollBar:SetValue(range)
         end
-        TradeSkillFrame.RecipeList:Refresh()
+        RecipeList:Refresh()
 
-        updatePosition()
-        updateTabs()
+        UIPanelWindows['TradeSkillFrame'].area = nil
+        TradeSkillFrame:ClearAllPoints()
+        TradeSkillFrame:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', TradeSkillUIImprovedDB.x, TradeSkillUIImprovedDB.y)
     elseif event == 'TRADE_SKILL_DATA_SOURCE_CHANGED' then
 		if not InCombatLockdown() then
-			updateTabs(true)
+            for i = 1, countTab do
+                local tab = _G['TradeSkillUIImprovedTab' .. i]
+                if tab and tab:IsShown() then
+                    tab:Hide()
+                end
+            end
+
+            local professions = {GetProfessions()}
+
+            for i, id in pairs(professions) do
+                local name, _, icon = GetSpellInfo(select(2, GetSpellBookItemInfo(select(6, GetProfessionInfo(id)) +1, BOOKTYPE_PROFESSION)))
+                local tab = _G['TradeSkillUIImprovedTab' .. i] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. i, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
+                tab.tooltip = name
+                tab:SetNormalTexture(icon)
+                tab:SetAttribute('type', 'spell')
+                tab:SetAttribute('spell', name)
+                tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * i) + -40)
+
+                if IsCurrentSpell(name) then
+                    tab:SetChecked(true)
+                    tab:RegisterForClicks(nil)
+                else
+                    tab:SetChecked(false)
+                    tab:RegisterForClicks('AnyDown')
+                end
+
+                tab:Show()
+            end
+
+            countTab = #professions
 		end
     end
 end)
@@ -123,10 +107,10 @@ local function TradeSkillUIImproved_SlashCmd(msg)
     if cmd == 'addBL' and args ~= '' then
         local tonumberArgs = tonumber(args)
         local recipeInfo = {}
-        C_TradeSkillUI.GetRecipeInfo(tonumberArgs, recipeInfo)
+        GetRecipeInfo(tonumberArgs, recipeInfo)
 
         if recipeInfo.name == nil then
-            C_TradeSkillUI.GetCategoryInfo(tonumberArgs, recipeInfo)
+            GetCategoryInfo(tonumberArgs, recipeInfo)
         end
 
         if IsInTable(TradeSkillUIImprovedDB.BlackList, tonumberArgs) then
@@ -196,12 +180,12 @@ SlashCmdList["TSUII"] = TradeSkillUIImproved_SlashCmd
 
 hooksecurefunc('ToggleGameMenu', function()
 	if TradeSkillFrame:IsShown() then
-		C_TradeSkillUI.CloseTradeSkill()
+		CloseTradeSkill()
 		HideUIPanel(GameMenuFrame)
 	end
 end)
 
-hooksecurefunc(TradeSkillFrame.RecipeList, 'UpdateFilterBar', function(self)
+hooksecurefunc(RecipeList, 'UpdateFilterBar', function(self)
 	if self.FilterBar:IsVisible() then
 		self:SetHeight(TradeSkillUIImprovedDB.size * 16 - 11)
 	else
@@ -209,7 +193,7 @@ hooksecurefunc(TradeSkillFrame.RecipeList, 'UpdateFilterBar', function(self)
 	end
 end)
 
-hooksecurefunc(TradeSkillFrame.RecipeList, 'RebuildDataList', function(self)
+hooksecurefunc(RecipeList, 'RebuildDataList', function(self)
     if type(TradeSkillUIImprovedDB.BlackList) == 'table' and #TradeSkillUIImprovedDB.BlackList > 0 then
         for i, listData in ipairs(self.dataList) do
             if listData.type == 'recipe' and IsInTable(TradeSkillUIImprovedDB.BlackList, listData.recipeID) then
@@ -231,12 +215,12 @@ hooksecurefunc(TradeSkillFrame.RecipeList, 'RebuildDataList', function(self)
     end
 end)
 
-hooksecurefunc(TradeSkillFrame.RecipeList, 'OnDataSourceChanging', function()
+hooksecurefunc(RecipeList, 'OnDataSourceChanging', function()
     TradeSkillUIImproved_CheckButtonHasMaterials:SetChecked(false)
     TradeSkillUIImproved_CheckButtonHasSkillUp:SetChecked(false)
 end)
 
-hooksecurefunc(TradeSkillFrame.RecipeList, 'OnHeaderButtonClicked', function(_, _, categoryInfo, mouseButton)
+hooksecurefunc(RecipeList, 'OnHeaderButtonClicked', function(_, _, categoryInfo, mouseButton)
     if mouseButton == 'RightButton' then
         TradeSkillUIImproved_Print(L["The clicked categoryID is"] .. ' |cffffff00' .. categoryInfo.categoryID .. '|r.')
     end
@@ -247,16 +231,16 @@ TradeSkillUIImproved_CollapseButton:SetText('-')
 TradeSkillUIImproved_CollapseButton:SetWidth(20)
 TradeSkillUIImproved_CollapseButton:SetHeight(20)
 TradeSkillUIImproved_CollapseButton:ClearAllPoints()
-TradeSkillUIImproved_CollapseButton:SetPoint('LEFT', TradeSkillFrame.SearchBox, 'RIGHT', 3, 0)
+TradeSkillUIImproved_CollapseButton:SetPoint('LEFT', SearchBox, 'RIGHT', 3, 0)
 TradeSkillUIImproved_CollapseButton:SetScript('OnClick', function()
-    local categories = {C_TradeSkillUI.GetCategories()}
+    local categories = {GetCategories()}
     for _, categoryID in ipairs(categories) do
-        local subCategories = {C_TradeSkillUI.GetSubCategories(categoryID)}
+        local subCategories = {GetSubCategories(categoryID)}
         for _, subId in ipairs(subCategories) do
-            TradeSkillFrame.RecipeList.collapsedCategories[subId] = true
+            RecipeList.collapsedCategories[subId] = true
         end
     end
-    TradeSkillFrame.RecipeList:Refresh()
+    RecipeList:Refresh()
 end)
 
 local TradeSkillUIImproved_ExpandButton = CreateFrame('Button', nil, TradeSkillFrame, 'UIPanelButtonTemplate')
@@ -266,14 +250,14 @@ TradeSkillUIImproved_ExpandButton:SetHeight(20)
 TradeSkillUIImproved_ExpandButton:ClearAllPoints()
 TradeSkillUIImproved_ExpandButton:SetPoint('LEFT', TradeSkillUIImproved_CollapseButton, 'RIGHT', 3, 0)
 TradeSkillUIImproved_ExpandButton:SetScript('OnClick', function()
-    local categories = {C_TradeSkillUI.GetCategories()}
+    local categories = {GetCategories()}
     for _, categoryID in ipairs(categories) do
-        local subCategories = {C_TradeSkillUI.GetSubCategories(categoryID)}
+        local subCategories = {GetSubCategories(categoryID)}
         for _, subId in ipairs(subCategories) do
-            TradeSkillFrame.RecipeList.collapsedCategories[subId] = nil
+            RecipeList.collapsedCategories[subId] = nil
         end
     end
-    TradeSkillFrame.RecipeList:Refresh()
+    RecipeList:Refresh()
 end)
 
 local TradeSkillUIImproved_CheckButtonHasMaterials = CreateFrame('CheckButton', 'TradeSkillUIImproved_CheckButtonHasMaterials', TradeSkillFrame, 'UICheckButtonTemplate')
@@ -285,7 +269,7 @@ TradeSkillUIImproved_CheckButtonHasMaterialsText:SetWidth(110)
 TradeSkillUIImproved_CheckButtonHasMaterialsText:SetJustifyH('LEFT')
 TradeSkillUIImproved_CheckButtonHasMaterials:SetChecked(C_TradeSkillUI.GetOnlyShowMakeableRecipes())
 TradeSkillUIImproved_CheckButtonHasMaterials:SetScript('OnClick', function()
-    C_TradeSkillUI.SetOnlyShowMakeableRecipes(TradeSkillUIImproved_CheckButtonHasMaterials:GetChecked())
+    SetOnlyShowMakeableRecipes(TradeSkillUIImproved_CheckButtonHasMaterials:GetChecked())
 end)
 
 hooksecurefunc(C_TradeSkillUI, 'SetOnlyShowMakeableRecipes', function(show)
@@ -301,7 +285,7 @@ TradeSkillUIImproved_CheckButtonHasSkillUpText:SetWidth(110)
 TradeSkillUIImproved_CheckButtonHasSkillUpText:SetJustifyH('LEFT')
 TradeSkillUIImproved_CheckButtonHasSkillUp:SetChecked(C_TradeSkillUI.GetOnlyShowSkillUpRecipes())
 TradeSkillUIImproved_CheckButtonHasSkillUp:SetScript('OnClick', function()
-    C_TradeSkillUI.SetOnlyShowSkillUpRecipes(TradeSkillUIImproved_CheckButtonHasSkillUp:GetChecked())
+    SetOnlyShowSkillUpRecipes(TradeSkillUIImproved_CheckButtonHasSkillUp:GetChecked())
 end)
 
 hooksecurefunc(C_TradeSkillUI, 'SetOnlyShowSkillUpRecipes', function(show)
@@ -315,7 +299,7 @@ TradeSkillUIImproved_SelectedRecipeIDButton:SetHeight(22)
 TradeSkillUIImproved_SelectedRecipeIDButton:ClearAllPoints()
 TradeSkillUIImproved_SelectedRecipeIDButton:SetPoint('BOTTOMRIGHT', TradeSkillFrame.DetailsFrame.CreateButton, 'BOTTOMRIGHT', 85, 0)
 TradeSkillUIImproved_SelectedRecipeIDButton:SetScript('OnClick', function()
-    local recipeID = TradeSkillFrame.RecipeList.selectedRecipeID
+    local recipeID = RecipeList.selectedRecipeID
     if recipeID ~= nil then
         TradeSkillUIImproved_Print(L["The selected recipeID is"] .. ' |cffffff00' .. recipeID .. '|r.')
     else
