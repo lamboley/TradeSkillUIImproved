@@ -28,4 +28,11 @@ globals = {
         "CRAFT_IS_MAKEABLE",
         "TRADESKILL_FILTER_HAS_SKILL_UP",
         "GetLocale",
+        "InCombatLockdown",
+        "GetProfessions",
+        "GetProfessionInfo",
+        "GetSpellBookItemInfo",
+        "GetSpellInfo",
+        "BOOKTYPE_PROFESSION",
+        "IsCurrentSpell",
 }

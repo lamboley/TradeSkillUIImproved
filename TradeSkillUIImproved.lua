@@ -2,7 +2,7 @@ local _, L = ...
 
 if IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
 
-TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or { size = 55, x = 200, y = 1050, BlackList = {} }
+TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or { size = 55, x = 200, y = 1050, countTab = 0, BlackList = {} }
 
 local function TradeSkillUIImproved_Print(msg)
     print('|cff00ff00TSUII|r: ' .. msg)
@@ -23,8 +23,59 @@ local function updatePosition()
     TradeSkillFrame:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', TradeSkillUIImprovedDB.x, TradeSkillUIImprovedDB.y)
 end
 
+local function isCurrentTab(self)
+    if self.tooltip and IsCurrentSpell(self.tooltip) then
+        self:SetChecked(true)
+        self:RegisterForClicks(nil)
+    else
+        self:SetChecked(false)
+        self:RegisterForClicks('AnyDown')
+    end
+end
+
+local function updateTabs(init)
+    local mainTabs = {}
+
+    if init then
+        for i = 1, TradeSkillUIImprovedDB.countTab do
+            local tab = _G['TradeSkillUIImprovedTab' .. i]
+            if tab and tab:IsShown() then
+                tab:Hide()
+                tab:UnregisterEvent('TRADE_SKILL_SHOW')
+                tab:UnregisterEvent('CURRENT_SPELL_CAST_CHANGED')
+            end
+        end
+    end
+
+    for _, professionID in pairs({GetProfessions()}) do
+        local _, _, _, _, _, offset, _, _, _, _ =  GetProfessionInfo(professionID)
+        local _, id = GetSpellBookItemInfo(offset + 1, BOOKTYPE_PROFESSION)
+        tinsert(mainTabs, id)
+    end
+
+    TradeSkillUIImprovedDB.countTab = #mainTabs
+
+    for i, id in pairs(mainTabs) do
+        local name, _, icon = GetSpellInfo(id)
+        local tab = _G['TradeSkillUIImprovedTab' .. i] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. i, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
+        tab:SetScript('OnEvent', isCurrentTab)
+        tab:RegisterEvent('TRADE_SKILL_SHOW')
+        tab:RegisterEvent('CURRENT_SPELL_CAST_CHANGED')
+
+        tab.id = id
+        tab.tooltip = name
+        tab:SetNormalTexture(icon)
+        tab:SetAttribute('type', 'spell')
+        tab:SetAttribute('spell', name)
+        tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * i) + -40)
+        isCurrentTab(tab)
+        tab:Show()
+    end
+end
+
 local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
 TradeSkillUIImproved:RegisterEvent('PLAYER_LOGIN')
+TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_DATA_SOURCE_CHANGED')
 
 TradeSkillUIImproved.version = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
 
@@ -58,6 +109,11 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
         TradeSkillFrame.RecipeList:Refresh()
 
         updatePosition()
+        updateTabs()
+    elseif event == 'TRADE_SKILL_DATA_SOURCE_CHANGED' then
+		if not InCombatLockdown() then
+			updateTabs(true)
+		end
     end
 end)
 
@@ -182,7 +238,6 @@ end)
 
 hooksecurefunc(TradeSkillFrame.RecipeList, 'OnHeaderButtonClicked', function(_, _, categoryInfo, mouseButton)
     if mouseButton == 'RightButton' then
-        print(categoryInfo.type)
         TradeSkillUIImproved_Print(L["The clicked categoryID is"] .. ' |cffffff00' .. categoryInfo.categoryID .. '|r.')
     end
 end)

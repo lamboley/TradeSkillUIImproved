@@ -11,9 +11,10 @@ TradeSkillUIImproved improve the default tradeskill UI. His major feature allow 
 * Close the tradeskill UI with the echap key.
 * Add two button for collapse and expand all recipe.
 * Add two checkbox for filter has materials and has skill up.
+* Add tab frame for switching profession on the main frame.
 * Replace the 'Quit' button by a button which print in chat the id of the selected recipe (recipeID).
 * If the addon Auctionator is installed, hide the 'AH' button in the tradeskill UI.
-* Add a system of blacklist of recipe for hidding them in the tradeskill UI.
+* Add a system of blacklist of recipe and header for hidding them in the tradeskill UI.
 
 ## Documentation
 
@@ -26,8 +27,7 @@ For more documentation, take a look at the [wiki](https://github.com/lamboley/Tr
 
 ## Bugs know
 
-* Filter check box are not cleaned when you change of profession (will be fixed in v1.0.3).
-* Actually you cannot hide header and sub-header, only the recipe can be hided (will be fixed in v1.0.3).
+* As v1.0.3 you can hide sub-header (sub-category of expansion) but you should not hide header (category of expansion).
 
 ## Issues
 
