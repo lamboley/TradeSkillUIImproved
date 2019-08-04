@@ -1,8 +1,8 @@
 local _, L = ...
-local countTab = 0
+local index = 0
 
-local CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell
-    = CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell
+local CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell, HideUIPanel
+    = CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell, HideUIPanel
 local GetCategories, GetSubCategories, GetRecipeInfo, GetCategoryInfo
     = C_TradeSkillUI.GetCategories, C_TradeSkillUI.GetSubCategories, C_TradeSkillUI.GetRecipeInfo, C_TradeSkillUI.GetCategoryInfo
 local CloseTradeSkill, SetOnlyShowMakeableRecipes, SetOnlyShowSkillUpRecipes
@@ -30,6 +30,7 @@ end
 local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
 TradeSkillUIImproved:RegisterEvent('PLAYER_LOGIN')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_DATA_SOURCE_CHANGED')
+TradeSkillUIImproved:RegisterEvent('ARCHAEOLOGY_CLOSED')
 
 TradeSkillUIImproved.version = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
 
@@ -67,23 +68,20 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
         TradeSkillFrame:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', TradeSkillUIImprovedDB.x, TradeSkillUIImprovedDB.y)
     elseif event == 'TRADE_SKILL_DATA_SOURCE_CHANGED' then
 		if not InCombatLockdown() then
-            for i = 1, countTab do
-                local tab = _G['TradeSkillUIImprovedTab' .. i]
-                if tab and tab:IsShown() then
-                    tab:Hide()
-                end
+            for i = 1, index do
+                _G['TradeSkillUIImprovedTab' .. i]:Hide()
             end
 
-            local professions = {GetProfessions()}
+            index = 0
 
-            for i, id in pairs(professions) do
-                local name, _, icon = GetSpellInfo(select(2, GetSpellBookItemInfo(select(6, GetProfessionInfo(id)) +1, BOOKTYPE_PROFESSION)))
-                local tab = _G['TradeSkillUIImprovedTab' .. i] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. i, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
+            local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
+            for _, id in pairs({prof1, prof2, cooking, archaeology, fishing}) do
+                index = index + 1
+
+                local name, _, icon, _, _, _, spellID = GetSpellInfo(select(2, GetSpellBookItemInfo(select(6, GetProfessionInfo(id)) + 1, BOOKTYPE_PROFESSION)))
+                local tab = _G['TradeSkillUIImprovedTab' .. index] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. index, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
                 tab.tooltip = name
-                tab:SetNormalTexture(icon)
-                tab:SetAttribute('type', 'spell')
-                tab:SetAttribute('spell', name)
-                tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * i) + -40)
+                tab.id = spellID
 
                 if IsCurrentSpell(name) then
                     tab:SetChecked(true)
@@ -93,11 +91,25 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
                     tab:RegisterForClicks('AnyDown')
                 end
 
-                tab:Show()
-            end
+                tab:SetNormalTexture(icon)
+                if spellID == 2550 or spellID == 271990 or spellID == 195127 then  -- 2550 = Cooking, 271990 = Fishing Skills, 195127 = Archaeology
+                    tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1.5))
+                else
+                    tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1))
+                end
 
-            countTab = #professions
+                tab:Show()
+                tab:SetAttribute('type', 'spell')
+                tab:SetAttribute('spell', name)
+            end
 		end
+    elseif event == 'ARCHAEOLOGY_CLOSED' then
+        for i = 1, index do
+            local tab = _G['TradeSkillUIImprovedTab' .. i]
+            if tab and tab.id == 195127 then
+                tab:SetChecked(false)
+            end
+        end
     end
 end)
 

@@ -2,7 +2,7 @@
 
 # TradeSkillUIImproved
 
-TradeSkillUIImproved improve the default tradeskill UI. His major feature allow the player to hide recipe in the tradeskill UI.
+TradeSkillUIImproved improve the default tradeskill UI. His major feature allow the player to hide a recipe in the tradeskill UI.
 
 ## Features
 
