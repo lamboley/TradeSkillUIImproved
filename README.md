@@ -28,7 +28,6 @@ For more documentation, take a look at the [wiki](https://github.com/lamboley/Tr
 ## Bugs know
 
 * As v1.0.3 you can hide sub-header (sub-category of expansion) but you should not hide header (category of expansion).
-*
 
 ## Issues
 
