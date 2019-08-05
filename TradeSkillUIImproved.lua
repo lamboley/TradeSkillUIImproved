@@ -103,7 +103,7 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
                 tab:SetAttribute('spell', name)
             end
 		end
-    elseif event == 'ARCHAEOLOGY_CLOSED' then
+    elseif event == 'ARCHAEOLOGY_CLOSED' then -- Fix the highlight of Archaeology when the frame is not closed with the checkbox tab frame.
         for i = 1, index do
             local tab = _G['TradeSkillUIImprovedTab' .. i]
             if tab and tab.id == 195127 then

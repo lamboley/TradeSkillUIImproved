@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-1.0.4 (2019-08-04)
+1.0.4 (2019-08-05)
 ------------------
 
 - Add tab frame for switching profession.
