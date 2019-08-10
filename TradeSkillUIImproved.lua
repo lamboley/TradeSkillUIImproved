@@ -80,7 +80,7 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             index = 0
 
             local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
-            for _, id in pairs({prof1, prof2, cooking, archaeology, fishing, (IsUsableSpell(runeforgingId) and runeforgingId)}) do
+            for _, id in pairs({prof1, prof2, cooking, archaeology, fishing, (IsSpellKnown(runeforgingId) and runeforgingId or nil)}) do
                 index = index + 1
 
                 local name, icon, spellID
