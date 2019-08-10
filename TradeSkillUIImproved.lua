@@ -1,6 +1,11 @@
 local _, L = ...
 local index = 0
 
+local runeforgingId = 53428
+local cookingId = 2550
+local fishingId = 271990
+local archaeologyId = 195127
+
 local CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell, HideUIPanel
     = CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell, HideUIPanel
 local GetCategories, GetSubCategories, GetRecipeInfo, GetCategoryInfo
@@ -75,10 +80,16 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             index = 0
 
             local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
-            for _, id in pairs({prof1, prof2, cooking, archaeology, fishing}) do
+            for _, id in pairs({prof1, prof2, cooking, archaeology, fishing, (IsUsableSpell(runeforgingId) and runeforgingId)}) do
                 index = index + 1
 
-                local name, _, icon, _, _, _, spellID = GetSpellInfo(select(2, GetSpellBookItemInfo(select(6, GetProfessionInfo(id)) + 1, BOOKTYPE_PROFESSION)))
+                local name, icon, spellID
+                if id == runeforgingId then
+                    name, _, icon, _, _, _, spellID = GetSpellInfo(runeforgingId)
+                else
+                    name, _, icon, _, _, _, spellID = GetSpellInfo(select(2, GetSpellBookItemInfo(select(6, GetProfessionInfo(id)) + 1, BOOKTYPE_PROFESSION)))
+                end
+
                 local tab = _G['TradeSkillUIImprovedTab' .. index] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. index, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
                 tab.tooltip = name
                 tab.id = spellID
@@ -92,7 +103,7 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
                 end
 
                 tab:SetNormalTexture(icon)
-                if spellID == 2550 or spellID == 271990 or spellID == 195127 then  -- 2550 = Cooking, 271990 = Fishing Skills, 195127 = Archaeology
+                if spellID == cookingId or spellID == fishingId or spellID == archaeologyId or spellID == runeforgingId then
                     tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1.5))
                 else
                     tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1))
