@@ -35,5 +35,6 @@ globals = {
         "GetSpellInfo",
         "BOOKTYPE_PROFESSION",
         "IsCurrentSpell",
+        "IsSpellKnown",
         "tinsert",
 }
