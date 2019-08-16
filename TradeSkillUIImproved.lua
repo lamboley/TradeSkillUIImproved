@@ -98,7 +98,7 @@ TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdrop({
 TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdropColor(0, 0, 0, 0.5)
 TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.8)
 
-TradeSkillUIImproved_OptionsSliderSize:HookScript('OnValueChanged', function(self, value)
+TradeSkillUIImproved_OptionsSliderSize:HookScript('OnValueChanged', function(_, value)
     TradeSkillUIImprovedDB.options.factor = value
     TradeSkillUIImproved_OptionsSliderSizeValueBox:SetText(floor(value))
     TradeSkillUIImproved_OptionsSliderSizeValueBox:SetCursorPosition(0) -- Fix value not showing up
