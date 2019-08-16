@@ -37,4 +37,12 @@ globals = {
         "IsCurrentSpell",
         "IsSpellKnown",
         "tonumber",
+        "GameFontHighlightSmall",
+        "TradeSkillUIImproved_OptionsCheckBoxAuctionatorText",
+        "TradeSkillUIImproved_OptionsSliderSizeText",
+        "TradeSkillUIImproved_OptionsSliderSizeLow",
+        "TradeSkillUIImproved_OptionsSliderSizeHigh",
+        "InterfaceOptions_AddCategory",
+        "InterfaceOptionsFrame_OpenToCategory",
+
 }
