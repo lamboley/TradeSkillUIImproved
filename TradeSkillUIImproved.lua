@@ -16,9 +16,18 @@ local CloseTradeSkill, SetOnlyShowMakeableRecipes, SetOnlyShowSkillUpRecipes
 local TradeSkillFrame, DetailsFrame, FilterButton, RankFrame, SearchBox, RecipeList
     = TradeSkillFrame, TradeSkillFrame.DetailsFrame, TradeSkillFrame.FilterButton, TradeSkillFrame.RankFrame, TradeSkillFrame.SearchBox, TradeSkillFrame.RecipeList
 
-if IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
+local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
+local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
 
-TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or { size = 55, x = 200, y = 1050, BlackList = {} }
+TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or {
+    options = {
+        hideAuctionator = true,
+        factor = 55,
+    },
+    x = 200,
+    y = 1050,
+    BlackList = {},
+}
 
 local function TradeSkillUIImproved_Print(msg)
     print('|cff00ff00TSUII|r: ' .. msg)
@@ -34,20 +43,98 @@ local function IsInTable(l, e)
 end
 
 local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
+TradeSkillUIImproved.name = addonName
+
 TradeSkillUIImproved:RegisterEvent('PLAYER_LOGIN')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_LIST_UPDATE')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_DATA_SOURCE_CHANGED')
 TradeSkillUIImproved:RegisterEvent('ARCHAEOLOGY_CLOSED')
 
-TradeSkillUIImproved.version = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
+local TradeSkillUIImproved_OptionsTitle = TradeSkillUIImproved:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
+TradeSkillUIImproved_OptionsTitle:SetPoint('TOPLEFT', 16, -16)
+TradeSkillUIImproved_OptionsTitle:SetText(TradeSkillUIImproved.name .. ' - General Options')
+
+local TradeSkillUIImproved_OptionsCheckBoxAuctionator = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxAuctionator', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsTitle, 'BOTTOMLEFT', 0, -5)
+TradeSkillUIImproved_OptionsCheckBoxAuctionator.tooltipText = L["The addon Auctionator had a button in the tradeskill UI. This options allow you to hide that button.\n\nA reload is necessary."]
+TradeSkillUIImproved_OptionsCheckBoxAuctionatorText:SetText(L["Hide the AH button if the addon Auctionator is loaded."])
+TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetChecked(TradeSkillUIImprovedDB.options.hideAuctionator)
+TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetScript('OnClick', function(self)
+    TradeSkillUIImprovedDB.options.hideAuctionator = self:GetChecked()
+end)
+
+local TradeSkillUIImproved_OptionsSliderSize = CreateFrame('Slider', 'TradeSkillUIImproved_OptionsSliderSize', TradeSkillUIImproved, 'OptionsSliderTemplate')
+TradeSkillUIImproved_OptionsSliderSize:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsTitle, 'BOTTOMLEFT', 5, -50)
+TradeSkillUIImproved_OptionsSliderSize.tooltipText = L["Allow to change de factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."]
+TradeSkillUIImproved_OptionsSliderSize:SetValueStep(1)
+TradeSkillUIImproved_OptionsSliderSize:SetMinMaxValues(25, 75)
+TradeSkillUIImproved_OptionsSliderSizeText:SetText('|cffffff00' .. L["Size factor"] .. '|r')
+TradeSkillUIImproved_OptionsSliderSizeLow:SetText('25')
+TradeSkillUIImproved_OptionsSliderSizeHigh:SetText('75')
+
+local TradeSkillUIImproved_OptionsSliderSizeValueBox = CreateFrame('editbox', nil, TradeSkillUIImproved_OptionsSliderSize)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetPoint('TOP', TradeSkillUIImproved_OptionsSliderSize, 'BOTTOM', 0, 0)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetSize(60, 14)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetFontObject(GameFontHighlightSmall)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetMaxLetters(2)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetAutoFocus(false)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetJustifyH('CENTER')
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnEscapePressed', function(self)
+    self:SetText(TradeSkillUIImprovedDB.options.factor)
+    self:ClearFocus()
+end)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnEnterPressed', function(self)
+    local value = tonumber(self:GetText()) or TradeSkillUIImprovedDB.options.factor or 25
+    TradeSkillUIImproved_OptionsSliderSize:SetValue(value)
+    TradeSkillUIImprovedDB.options.factor = value
+    self:SetText(value)
+    self:ClearFocus()
+end)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdrop({
+    bgFile = 'Interface/ChatFrame/ChatFrameBackground',
+    edgeFile = 'Interface/ChatFrame/ChatFrameBackground',
+    tile = true, edgeSize = 1, tileSize = 5,
+})
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdropColor(0, 0, 0, 0.5)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.8)
+
+TradeSkillUIImproved_OptionsSliderSize:HookScript('OnValueChanged', function(self, value)
+    TradeSkillUIImprovedDB.options.factor = value
+    TradeSkillUIImproved_OptionsSliderSizeValueBox:SetText(floor(value))
+    TradeSkillUIImproved_OptionsSliderSizeValueBox:SetCursorPosition(0) -- Fix value not showing up
+end)
+TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnChar', function(self)
+    self:SetText(self:GetText():gsub('[^%.0-9]+', ''):gsub('(%..*)%.', '%1'))
+end)
+
+InterfaceOptions_AddCategory(TradeSkillUIImproved)
 
 TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
     if event == 'PLAYER_LOGIN' then
-        TradeSkillFrame:SetHeight(TradeSkillUIImprovedDB.size * 16 + 96)
-        TradeSkillFrame.RecipeInset:SetHeight(TradeSkillUIImprovedDB.size * 16 + 10)
-        TradeSkillFrame.DetailsInset:SetHeight(TradeSkillUIImprovedDB.size * 16 - 10)
-        DetailsFrame:SetHeight(TradeSkillUIImprovedDB.size * 16 - 15)
-        DetailsFrame.Background:SetHeight(TradeSkillUIImprovedDB.size * 16 - 17)
+        -- Ensure options exists in the saved variable. If options have been added in a
+        -- new version and a player use a v-1 version of the addon, an error may be
+        -- thrown because the saved variable is already created, so the default
+        -- settings have not been used, so the new options do not exists.
+        if TradeSkillUIImprovedDB.options == nil then
+            TradeSkillUIImprovedDB.options = {
+                hideAuctionator = true,
+                factor = 55,
+            }
+        elseif TradeSkillUIImprovedDB.options.hideAuctionator == nil then
+            TradeSkillUIImprovedDB.options.hideAuctionator = true
+        elseif TradeSkillUIImprovedDB.options.factor == nil then
+            TradeSkillUIImprovedDB.options.factor = 55
+        end
+
+        if TradeSkillUIImprovedDB.options.hideAuctionator and IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
+
+        TradeSkillUIImproved_OptionsSliderSize:SetValue(TradeSkillUIImprovedDB.options.factor)
+
+        TradeSkillFrame:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 + 96)
+        TradeSkillFrame.RecipeInset:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 + 10)
+        TradeSkillFrame.DetailsInset:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 - 10)
+        DetailsFrame:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 - 15)
+        DetailsFrame.Background:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 - 17)
         DetailsFrame.ExitButton:Hide()
         TradeSkillFrame.LinkToButton:SetPoint('BOTTOMRIGHT', TradeSkillFrame, 'TOPRIGHT', -10, -81)
         FilterButton:SetPoint('TOPRIGHT', TradeSkillFrame, 'TOPRIGHT', -12, -31)
@@ -58,12 +145,12 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
         SearchBox:SetWidth(97)
 
         if RecipeList.FilterBar:IsVisible() then
-            RecipeList:SetHeight(TradeSkillUIImprovedDB.size * 16 - 11)
+            RecipeList:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 - 11)
         else
-            RecipeList:SetHeight(TradeSkillUIImprovedDB.size * 16 + 5)
+            RecipeList:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 + 5)
         end
 
-        if #RecipeList.buttons < floor(TradeSkillUIImprovedDB.size, 0.5) + 2 then
+        if #RecipeList.buttons < floor(TradeSkillUIImprovedDB.options.factor, 0.5) + 2 then
             local range = RecipeList.scrollBar:GetValue()
             HybridScrollFrame_CreateButtons(RecipeList, 'TradeSkillRowButtonTemplate', 0, 0)
             RecipeList.scrollBar:SetValue(range)
@@ -118,7 +205,6 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
                 tab:SetAttribute('spell', name)
             end
 		end
-
         SearchBox:SetText(searchText)
     elseif event == 'ARCHAEOLOGY_CLOSED' then -- Fix the highlight of Archaeology when the frame is not closed with the checkbox tab frame.
         for i = 1, index do
@@ -185,22 +271,20 @@ local function TradeSkillUIImproved_SlashCmd(msg)
         else
             TradeSkillUIImproved_Print(L["The recipeID"] .. ' |cffffff00' .. args .. '|r ' .. L["isn't in the blacklist."])
         end
-    elseif cmd == 'getSize'then
-        TradeSkillUIImproved_Print(L["The coefficient of the size is"] .. ' |cffffff00' .. TradeSkillUIImprovedDB.size .. "|r.")
-    elseif cmd == 'setSize' and args ~= '' then
-        TradeSkillUIImprovedDB.size = args
-        TradeSkillUIImproved_Print(L["The coefficient of the size has been set to"] .. ' |cffffff00' .. TradeSkillUIImprovedDB.size .. '|r. ' .. L["A reload is |cffffff00necessary|r."])
     elseif cmd == 'version' then
-        TradeSkillUIImproved_Print(L["The version of the addon is"] .. ' |cffffff00' .. TradeSkillUIImproved.version .. '|r.')
+        TradeSkillUIImproved_Print(L["The version of the addon is"] .. ' |cffffff00' .. addonVersion .. '|r.')
+    elseif cmd == 'options' then
+        -- We call it twice because of a bug of blizzard
+        InterfaceOptionsFrame_OpenToCategory(TradeSkillUIImproved)
+        InterfaceOptionsFrame_OpenToCategory(TradeSkillUIImproved)
     else
         TradeSkillUIImproved_Print(L["Arguments :"])
         print('  |cfffff194addBL|r - ' .. L["Add a recipeID in the blacklist."])
         print('  |cfffff194delBL|r - ' .. L["Delete the recipeID from the blacklist."])
         print('  |cfffff194showBL [' .. L["substring"] .. ']|r - ' .. L["Show the data of the blacklist. If an argument is passed, a pattern case-sensitive while be executed on the recipeID and the name."])
         print('  |cfffff194isBL|r - ' .. L["Show if the recipeID is in the blacklist."])
-        print('  |cfffff194getSize|r - ' .. L["Show the coefficient of the size."])
-        print('  |cfffff194setSize|r - ' .. L["Change the coefficient of the size. A reload will be necessary."])
         print('  |cfffff194version|r - ' .. L["Show the version fo the addon."])
+        print('  |cfffff194options|r - ' .. L["Show the options window."])
     end
 end
 
@@ -216,9 +300,9 @@ end)
 
 hooksecurefunc(RecipeList, 'UpdateFilterBar', function(self)
 	if self.FilterBar:IsVisible() then
-		self:SetHeight(TradeSkillUIImprovedDB.size * 16 - 11)
+		self:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 - 11)
 	else
-		self:SetHeight(TradeSkillUIImprovedDB.size * 16 + 5)
+		self:SetHeight(TradeSkillUIImprovedDB.options.factor * 16 + 5)
 	end
 end)
 
