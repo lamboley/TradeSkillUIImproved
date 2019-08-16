@@ -36,4 +36,5 @@ globals = {
         "BOOKTYPE_PROFESSION",
         "IsCurrentSpell",
         "IsSpellKnown",
+        "tonumber",
 }
