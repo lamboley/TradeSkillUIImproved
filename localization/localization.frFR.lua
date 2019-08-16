@@ -28,4 +28,8 @@ if GetLocale() == "frFR" then
     L["The clicked categoryID is"] = "Le categoryID cliqué est"
     L["The selected recipeID is"] = "Le recipeID selectionné est"
     L["No recipe is selected."] = "Aucune recette n'est séléctionnée."
+    L["Hide the AH button if the addon Auctionator is loaded."] = "Cache le bouton AH si l'addon Auctionator est activé"
+    L["Size factor"] = "Facteur de taille"
+    L["Allow to change de factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."] = "Permet de changer le facteur de taille de la fenêtre d'artisanat.\n\nLa valeur par défaut est 55, celle de blizzard est 27.\n\nUn rechargement est nécessaire."
+    L["The addon Auctionator had a button in the tradeskill UI. This options allow you to hide that button.\n\nA reload is necessary."] = "L'addon Auctionator ajoute un bouton dans la fenêtre d'artisanat. Cette option vous permet de cacher ce bouton.\n\nUn rechargement est nécessaire."
 end
