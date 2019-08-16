@@ -1,6 +1,7 @@
 local _, L = ...
 local index = 0
 
+local searchText = ''
 local runeforgingId = 53428
 local cookingId = 2550
 local fishingId = 271990
@@ -34,6 +35,7 @@ end
 
 local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
 TradeSkillUIImproved:RegisterEvent('PLAYER_LOGIN')
+TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_LIST_UPDATE')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_DATA_SOURCE_CHANGED')
 TradeSkillUIImproved:RegisterEvent('ARCHAEOLOGY_CLOSED')
 
@@ -71,6 +73,8 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
         UIPanelWindows['TradeSkillFrame'].area = nil
         TradeSkillFrame:ClearAllPoints()
         TradeSkillFrame:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', TradeSkillUIImprovedDB.x, TradeSkillUIImprovedDB.y)
+    elseif event == 'TRADE_SKILL_LIST_UPDATE' then
+        searchText = SearchBox:GetText()
     elseif event == 'TRADE_SKILL_DATA_SOURCE_CHANGED' then
 		if not InCombatLockdown() then
             for i = 1, index do
@@ -114,6 +118,8 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
                 tab:SetAttribute('spell', name)
             end
 		end
+
+        SearchBox:SetText(searchText)
     elseif event == 'ARCHAEOLOGY_CLOSED' then -- Fix the highlight of Archaeology when the frame is not closed with the checkbox tab frame.
         for i = 1, index do
             local tab = _G['TradeSkillUIImprovedTab' .. i]
