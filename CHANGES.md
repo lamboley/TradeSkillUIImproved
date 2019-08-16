@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-1.0.5 (2019-08-11)
+1.0.5 (2019-08-16)
 ------------------
 
 - Add runeforging at tab profession as a secondary profession.
