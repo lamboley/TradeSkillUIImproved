@@ -43,9 +43,14 @@ local function IsInTable(l, e)
     return false
 end
 
+local TradeSkillUIImproved_GameTooltipFrame = CreateFrame("GameTooltip", "TradeSkillUIImproved_GameTooltipFrame", nil, "GameTooltipTemplate")
+TradeSkillUIImproved_GameTooltipFrame:SetOwner(UIParent, "ANCHOR_NONE")
+
 local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
 TradeSkillUIImproved.name = addonName
 
+TradeSkillUIImproved:RegisterEvent('ADDON_LOADED')
+TradeSkillUIImproved:RegisterEvent('BAG_UPDATE')
 TradeSkillUIImproved:RegisterEvent('PLAYER_LOGIN')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_LIST_UPDATE')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_DATA_SOURCE_CHANGED')
@@ -112,8 +117,61 @@ end)
 
 InterfaceOptions_AddCategory(TradeSkillUIImproved)
 
-TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
-    if event == 'PLAYER_LOGIN' then
+hooksecurefunc('ContainerFrame_Update', function(self)
+    local id = self:GetID()
+    local name = self:GetName()
+	local itemButton
+
+    for i = 1, self.size, 1 do
+		itemButton = _G[name.."Item"..i]
+
+        local itemLink = GetContainerItemLink(id, itemButton:GetID())
+
+        if itemLink then
+            TradeSkillUIImproved_GameTooltipFrame:ClearLines()
+            TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
+
+            for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
+                local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
+                if text == ITEM_SPELL_KNOWN then
+                    SetItemButtonTextureVertexColor(itemButton, 0.9*1, 0.9*1, 0.9*0)
+                    SetItemButtonNormalTextureVertexColor(itemButton, 0.9*1, 0.9*1, 0.9*0)
+                end
+            end
+        end
+    end
+end)
+
+TradeSkillUIImproved:SetScript('OnEvent', function(_, event, ...)
+    if event == 'ADDON_LOADED' and (...) == 'Blizzard_AuctionUI' then
+        hooksecurefunc('AuctionFrameBrowse_Update', function()
+            local numBatchAuctions, totalAuctions = GetNumAuctionItems("list")
+            local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
+            local index, button, buttonTexture
+
+            for i = 1, NUM_BROWSE_TO_DISPLAY do
+                index = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
+
+                local shouldHide = index > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page))
+                if (not shouldHide) then
+                    local itemLink = GetAuctionItemLink('list', offset + i)
+
+                    if itemLink then
+                        TradeSkillUIImproved_GameTooltipFrame:ClearLines()
+                        TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
+
+                        for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
+                            local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
+                            if text == ITEM_SPELL_KNOWN then
+                                buttonTexture = _G['BrowseButton'..i..'ItemIconTexture']
+                                buttonTexture:SetVertexColor(1, 1, 0)
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    elseif event == 'PLAYER_LOGIN' then
         -- Ensure options exists in the saved variable. If options have been added in a
         -- new version and a player use a v-1 version of the addon, an error may be
         -- thrown because the saved variable is already created, so the default
@@ -295,6 +353,36 @@ end
 
 SLASH_TSUII1, SLASH_TSUII2 = '/TSUII', '/TradeSkillUIImproved'
 SlashCmdList["TSUII"] = TradeSkillUIImproved_SlashCmd
+
+hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
+    local numMerchantItems = GetMerchantNumItems()
+
+    for i = 1, MERCHANT_ITEMS_PER_PAGE do
+        local recipeInfo = {}
+        local index = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
+
+        if (index <= numMerchantItems) then
+            local itemLink = GetMerchantItemLink(index)
+
+            if itemLink then
+                TradeSkillUIImproved_GameTooltipFrame:ClearLines()
+                TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
+
+                for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
+                    local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
+                    if text == ITEM_SPELL_KNOWN then
+                        local itemButton = _G["MerchantItem"..i.."ItemButton"]
+                        local merchantButton = _G["MerchantItem"..i]
+                        SetItemButtonNameFrameVertexColor(merchantButton, 1, 1, 0)
+                        SetItemButtonSlotVertexColor(merchantButton, 1, 1, 0)
+                        SetItemButtonTextureVertexColor(itemButton, 0.9*1, 0.9*1, 0.9*0)
+                        SetItemButtonNormalTextureVertexColor(itemButton, 0.9*1, 0.9*1, 0.9*0)
+                    end
+                end
+            end
+        end
+    end
+end)
 
 hooksecurefunc('ToggleGameMenu', function()
 	if TradeSkillFrame:IsShown() then
