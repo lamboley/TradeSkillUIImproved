@@ -134,8 +134,8 @@ hooksecurefunc('ContainerFrame_Update', function(self)
             for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
                 local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
                 if text == ITEM_SPELL_KNOWN then
-                    SetItemButtonTextureVertexColor(itemButton, 0.9*1, 0.9*1, 0.9*0)
-                    SetItemButtonNormalTextureVertexColor(itemButton, 0.9*1, 0.9*1, 0.9*0)
+                    SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
+                    SetItemButtonNormalTextureVertexColor(itemButton, 1, 1, 0)
                 end
             end
         end
@@ -375,8 +375,8 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
                         local merchantButton = _G["MerchantItem"..i]
                         SetItemButtonNameFrameVertexColor(merchantButton, 1, 1, 0)
                         SetItemButtonSlotVertexColor(merchantButton, 1, 1, 0)
-                        SetItemButtonTextureVertexColor(itemButton, 0.9*1, 0.9*1, 0.9*0)
-                        SetItemButtonNormalTextureVertexColor(itemButton, 0.9*1, 0.9*1, 0.9*0)
+                        SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
+                        SetItemButtonNormalTextureVertexColor(itemButton, 1, 1, 0)
                     end
                 end
             end
