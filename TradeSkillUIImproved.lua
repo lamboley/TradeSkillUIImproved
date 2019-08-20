@@ -145,7 +145,7 @@ end)
 TradeSkillUIImproved:SetScript('OnEvent', function(_, event, ...)
     if event == 'ADDON_LOADED' and (...) == 'Blizzard_AuctionUI' then
         hooksecurefunc('AuctionFrameBrowse_Update', function()
-            local numBatchAuctions, totalAuctions = GetNumAuctionItems("list")
+            local numBatchAuctions = GetNumAuctionItems("list")
             local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
             local index, button, buttonTexture
 
