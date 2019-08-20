@@ -150,12 +150,12 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event, ...)
         hooksecurefunc('AuctionFrameBrowse_Update', function()
             local numBatchAuctions = GetNumAuctionItems("list")
             local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
-            local index, buttonTexture
+            local index_item, buttonTexture
 
             for i = 1, NUM_BROWSE_TO_DISPLAY do
-                index = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
+                index_item = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
 
-                local shouldHide = index > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page))
+                local shouldHide = index_item > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page))
                 if (not shouldHide) then
                     local itemLink = GetAuctionItemLink('list', offset + i)
 
@@ -362,10 +362,10 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 
     for i = 1, MERCHANT_ITEMS_PER_PAGE do
         local recipeInfo = {}
-        local index = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
+        local index_item = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
 
-        if (index <= numMerchantItems) then
-            local itemLink = GetMerchantItemLink(index)
+        if (index_item <= numMerchantItems) then
+            local itemLink = GetMerchantItemLink(index_item)
 
             if itemLink then
                 TradeSkillUIImproved_GameTooltipFrame:ClearLines()
