@@ -15,7 +15,10 @@ local CloseTradeSkill, SetOnlyShowMakeableRecipes, SetOnlyShowSkillUpRecipes
     = C_TradeSkillUI.CloseTradeSkill, C_TradeSkillUI.SetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes
 local TradeSkillFrame, DetailsFrame, FilterButton, RankFrame, SearchBox, RecipeList
     = TradeSkillFrame, TradeSkillFrame.DetailsFrame, TradeSkillFrame.FilterButton, TradeSkillFrame.RankFrame, TradeSkillFrame.SearchBox, TradeSkillFrame.RecipeList
-local GetAddOnMetadata, IsAddOnLoaded = GetAddOnMetadata, IsAddOnLoaded
+local GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, BrowseScrollFrame
+    = GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, BrowseScrollFrame
+local SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems
+    = SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems
 
 local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
 local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
