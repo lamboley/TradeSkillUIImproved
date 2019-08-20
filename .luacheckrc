@@ -44,5 +44,4 @@ globals = {
         "TradeSkillUIImproved_OptionsSliderSizeHigh",
         "InterfaceOptions_AddCategory",
         "InterfaceOptionsFrame_OpenToCategory",
-
 }

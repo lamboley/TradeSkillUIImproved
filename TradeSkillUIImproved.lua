@@ -15,6 +15,7 @@ local CloseTradeSkill, SetOnlyShowMakeableRecipes, SetOnlyShowSkillUpRecipes
     = C_TradeSkillUI.CloseTradeSkill, C_TradeSkillUI.SetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes
 local TradeSkillFrame, DetailsFrame, FilterButton, RankFrame, SearchBox, RecipeList
     = TradeSkillFrame, TradeSkillFrame.DetailsFrame, TradeSkillFrame.FilterButton, TradeSkillFrame.RankFrame, TradeSkillFrame.SearchBox, TradeSkillFrame.RecipeList
+local GetAddOnMetadata, IsAddOnLoaded = GetAddOnMetadata, IsAddOnLoaded
 
 local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
 local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
@@ -52,7 +53,7 @@ TradeSkillUIImproved:RegisterEvent('ARCHAEOLOGY_CLOSED')
 
 local TradeSkillUIImproved_OptionsTitle = TradeSkillUIImproved:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
 TradeSkillUIImproved_OptionsTitle:SetPoint('TOPLEFT', 16, -16)
-TradeSkillUIImproved_OptionsTitle:SetText(TradeSkillUIImproved.name .. ' - General Options')
+TradeSkillUIImproved_OptionsTitle:SetText(addonName)
 
 local TradeSkillUIImproved_OptionsCheckBoxAuctionator = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxAuctionator', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
 TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsTitle, 'BOTTOMLEFT', 0, -5)
@@ -64,13 +65,15 @@ TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetScript('OnClick', function(se
 end)
 
 local TradeSkillUIImproved_OptionsSliderSize = CreateFrame('Slider', 'TradeSkillUIImproved_OptionsSliderSize', TradeSkillUIImproved, 'OptionsSliderTemplate')
+TradeSkillUIImproved_OptionsSliderSize:SetWidth(585)
+TradeSkillUIImproved_OptionsSliderSize:SetHeight(13)
 TradeSkillUIImproved_OptionsSliderSize:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsTitle, 'BOTTOMLEFT', 5, -50)
 TradeSkillUIImproved_OptionsSliderSize.tooltipText = L["Allow to change de factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."]
 TradeSkillUIImproved_OptionsSliderSize:SetValueStep(1)
-TradeSkillUIImproved_OptionsSliderSize:SetMinMaxValues(25, 75)
-TradeSkillUIImproved_OptionsSliderSizeText:SetText('|cffffff00' .. L["Size factor"] .. '|r')
-TradeSkillUIImproved_OptionsSliderSizeLow:SetText('25')
-TradeSkillUIImproved_OptionsSliderSizeHigh:SetText('75')
+TradeSkillUIImproved_OptionsSliderSize:SetMinMaxValues(27, 65)
+TradeSkillUIImproved_OptionsSliderSizeText:SetText(L["Size factor"])
+TradeSkillUIImproved_OptionsSliderSizeLow:SetText('27')
+TradeSkillUIImproved_OptionsSliderSizeHigh:SetText('65')
 
 local TradeSkillUIImproved_OptionsSliderSizeValueBox = CreateFrame('editbox', nil, TradeSkillUIImproved_OptionsSliderSize)
 TradeSkillUIImproved_OptionsSliderSizeValueBox:SetPoint('TOP', TradeSkillUIImproved_OptionsSliderSize, 'BOTTOM', 0, 0)
@@ -84,7 +87,7 @@ TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnEscapePressed', func
     self:ClearFocus()
 end)
 TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnEnterPressed', function(self)
-    local value = tonumber(self:GetText()) or TradeSkillUIImprovedDB.options.factor or 25
+    local value = tonumber(self:GetText()) or TradeSkillUIImprovedDB.options.factor or 27
     TradeSkillUIImproved_OptionsSliderSize:SetValue(value)
     TradeSkillUIImprovedDB.options.factor = value
     self:SetText(value)
@@ -126,7 +129,9 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             TradeSkillUIImprovedDB.options.factor = 55
         end
 
-        if TradeSkillUIImprovedDB.options.hideAuctionator and IsAddOnLoaded('Auctionator') then Auctionator_Search:Hide() end
+        if TradeSkillUIImprovedDB.options.hideAuctionator and IsAddOnLoaded('Auctionator') then
+            Auctionator_Search:Hide()
+        end
 
         TradeSkillUIImproved_OptionsSliderSize:SetValue(TradeSkillUIImprovedDB.options.factor)
 
