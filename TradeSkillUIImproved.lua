@@ -147,7 +147,7 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event, ...)
         hooksecurefunc('AuctionFrameBrowse_Update', function()
             local numBatchAuctions = GetNumAuctionItems("list")
             local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
-            local index, button, buttonTexture
+            local index, buttonTexture
 
             for i = 1, NUM_BROWSE_TO_DISPLAY do
                 index = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
