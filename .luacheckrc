@@ -44,4 +44,11 @@ globals = {
         "TradeSkillUIImproved_OptionsSliderSizeHigh",
         "InterfaceOptions_AddCategory",
         "InterfaceOptionsFrame_OpenToCategory",
+        "GetContainerItemLink",
+        "ITEM_SPELL_KNOWN",
+        "SetItemButtonTextureVertexColor",
+        "SetItemButtonNormalTextureVertexColor",
+        "GetNumAuctionItems",
+        "FauxScrollFrame_GetOffset",
+        "BrowseScrollFrame",
 }
