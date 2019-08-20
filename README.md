@@ -18,6 +18,12 @@ TradeSkillUIImproved improve the default tradeskill UI. His major feature allow 
 * If the addon Auctionator is installed, hide the 'AH' button in the tradeskill UI.
 * Add a system of blacklist of recipe and sub-header for hidding them in the tradeskill UI.
 
+## Incoming features
+
+* Changing the color of the icon of a recipe in yellow in a merchant, auction, bag and bank if you have already learned the recipe.
+* Active profession spell (camp fire, disenchant, skinning, etc) as a tab frame.
+* Interface option for settings with a beautiful window instead of a slash command.
+
 ## Documentation
 
 For more documentation, take a look at the [wiki](https://github.com/lamboley/TradeSkillUIImproved/wiki) page.
@@ -27,7 +33,7 @@ For more documentation, take a look at the [wiki](https://github.com/lamboley/Tr
 * English (arlaios)
 * French (arlaios)
 
-## Bugs know
+## Bug know
 
 * As v1.0.3 you can hide sub-header (sub-category of expansion) but you should not hide header (category of expansion).
 
