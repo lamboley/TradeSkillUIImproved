@@ -18,7 +18,7 @@ Changelog
 
 - Clean the two checkbox when datasource of profession is changed.
 - Allow to hide sub-header but not header.
-- Add a feature to print a categoryID by a right on it.
+- Add a feature to print a categoryID by a right click on it.
 
 1.0.2 (2019-07-28)
 ------------------
