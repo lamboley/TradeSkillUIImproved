@@ -15,10 +15,12 @@ local CloseTradeSkill, SetOnlyShowMakeableRecipes, SetOnlyShowSkillUpRecipes
     = C_TradeSkillUI.CloseTradeSkill, C_TradeSkillUI.SetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes
 local TradeSkillFrame, DetailsFrame, FilterButton, RankFrame, SearchBox, RecipeList
     = TradeSkillFrame, TradeSkillFrame.DetailsFrame, TradeSkillFrame.FilterButton, TradeSkillFrame.RankFrame, TradeSkillFrame.SearchBox, TradeSkillFrame.RecipeList
-local GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, BrowseScrollFrame
-    = GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, BrowseScrollFrame
-local SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems
-    = SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems
+local GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, BrowseScrollFrame, AuctionFrameBrowse, GetMerchantNumItems
+    = GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, BrowseScrollFrame, AuctionFrameBrowse, GetMerchantNumItems
+local SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
+    = SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
+local SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
+    = SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
 
 local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
 local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
@@ -361,7 +363,6 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
     local numMerchantItems = GetMerchantNumItems()
 
     for i = 1, MERCHANT_ITEMS_PER_PAGE do
-        local recipeInfo = {}
         local index_item = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
 
         if (index_item <= numMerchantItems) then
