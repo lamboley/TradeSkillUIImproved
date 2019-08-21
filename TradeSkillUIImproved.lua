@@ -15,8 +15,8 @@ local CloseTradeSkill, SetOnlyShowMakeableRecipes, SetOnlyShowSkillUpRecipes
     = C_TradeSkillUI.CloseTradeSkill, C_TradeSkillUI.SetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes
 local TradeSkillFrame, DetailsFrame, FilterButton, RankFrame, SearchBox, RecipeList
     = TradeSkillFrame, TradeSkillFrame.DetailsFrame, TradeSkillFrame.FilterButton, TradeSkillFrame.RankFrame, TradeSkillFrame.SearchBox, TradeSkillFrame.RecipeList
-local GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, BrowseScrollFrame, AuctionFrameBrowse, GetMerchantNumItems
-    = GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, BrowseScrollFrame, AuctionFrameBrowse, GetMerchantNumItems
+local GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, GetMerchantNumItems
+    = GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, GetMerchantNumItems
 local SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
     = SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
 local SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
@@ -147,8 +147,10 @@ hooksecurefunc('ContainerFrame_Update', function(self)
     end
 end)
 
-TradeSkillUIImproved:SetScript('OnEvent', function(_, event, ...)
+TradeSkillUIImproved:SetScript('OnEvent', function(self, event, ...)
     if event == 'ADDON_LOADED' and (...) == 'Blizzard_AuctionUI' then
+        self:UnregisterEvent(event)
+
         hooksecurefunc('AuctionFrameBrowse_Update', function()
             local numBatchAuctions = GetNumAuctionItems("list")
             local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
