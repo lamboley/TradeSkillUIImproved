@@ -4,8 +4,14 @@ local index = 0
 local searchText = ''
 local runeforgingId = 53428
 local cookingId = 2550
+local firecampId = 818
 local fishingId = 271990
+local fishingPoleId = 131474
 local archaeologyId = 195127
+local digId = 80451
+
+local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
+local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
 
 local CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell, HideUIPanel
     = CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell, HideUIPanel
@@ -22,18 +28,30 @@ local SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, Ge
 local SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
     = SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
 
-local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
-local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
-
 TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or {
     options = {
         hideAuctionator = true,
         factor = 55,
+        colorRecipe = true,
     },
     x = 200,
     y = 1050,
     BlackList = {},
 }
+
+local function TradeSkillUIImproved_ParseTextGameToolTip(itemLink, changeVertexColor)
+    if itemLink then
+        TradeSkillUIImproved_GameTooltipFrame:ClearLines()
+        TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
+
+        for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
+            local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
+            if text == ITEM_SPELL_KNOWN then
+                changeVertexColor()
+            end
+        end
+    end
+end
 
 local function TradeSkillUIImproved_Print(msg)
     print('|cff00ff00TSUII|r: ' .. msg)
@@ -48,151 +66,197 @@ local function IsInTable(l, e)
     return false
 end
 
+local function isCurrentTab(self)
+    if self.tooltip and IsCurrentSpell(self.tooltip) then
+        self:SetChecked(true)
+        if self.id == archaeologyId then
+            self:RegisterForClicks('AnyDown')
+        else
+            self:RegisterForClicks(nil)
+        end
+    else
+        self:SetChecked(false)
+        self:RegisterForClicks('AnyDown')
+    end
+end
+
+local function factoryCheckButton(id)
+    index = index + 1
+
+    local name, _, icon, _, _, _, spellID = GetSpellInfo(id)
+
+    local tab = _G['TradeSkillUIImprovedTab' .. index] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. index, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
+    tab:SetScript('OnEvent', isCurrentTab)
+    tab:RegisterEvent('TRADE_SKILL_SHOW')
+    tab:RegisterEvent('CURRENT_SPELL_CAST_CHANGED')
+    tab.tooltip = name
+    tab.id = spellID
+
+    tab:SetNormalTexture(icon)
+    if spellID == cookingId or spellID == firecampId or spellID == fishingId or spellID == fishingPoleId or spellID == archaeologyId or spellID == digId or spellID == runeforgingId then
+        tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1.5))
+    else
+        tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1))
+    end
+
+    tab:Show()
+    tab:SetAttribute('type', 'spell')
+    tab:SetAttribute('spell', name)
+
+    isCurrentTab(tab)
+end
+
 local TradeSkillUIImproved_GameTooltipFrame = CreateFrame("GameTooltip", "TradeSkillUIImproved_GameTooltipFrame", nil, "GameTooltipTemplate")
 TradeSkillUIImproved_GameTooltipFrame:SetOwner(UIParent, "ANCHOR_NONE")
 
 local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
 TradeSkillUIImproved.name = addonName
 
-TradeSkillUIImproved:RegisterEvent('ADDON_LOADED')
-TradeSkillUIImproved:RegisterEvent('BAG_UPDATE')
 TradeSkillUIImproved:RegisterEvent('PLAYER_LOGIN')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_LIST_UPDATE')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_DATA_SOURCE_CHANGED')
 TradeSkillUIImproved:RegisterEvent('ARCHAEOLOGY_CLOSED')
 
-local TradeSkillUIImproved_OptionsTitle = TradeSkillUIImproved:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
-TradeSkillUIImproved_OptionsTitle:SetPoint('TOPLEFT', 16, -16)
-TradeSkillUIImproved_OptionsTitle:SetText(addonName)
-
-local TradeSkillUIImproved_OptionsCheckBoxAuctionator = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxAuctionator', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
-TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsTitle, 'BOTTOMLEFT', 0, -5)
-TradeSkillUIImproved_OptionsCheckBoxAuctionator.tooltipText = L["The addon Auctionator had a button in the tradeskill UI. This options allow you to hide that button.\n\nA reload is necessary."]
-TradeSkillUIImproved_OptionsCheckBoxAuctionatorText:SetText(L["Hide the AH button if the addon Auctionator is loaded."])
-TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetChecked(TradeSkillUIImprovedDB.options.hideAuctionator)
-TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetScript('OnClick', function(self)
-    TradeSkillUIImprovedDB.options.hideAuctionator = self:GetChecked()
-end)
-
-local TradeSkillUIImproved_OptionsSliderSize = CreateFrame('Slider', 'TradeSkillUIImproved_OptionsSliderSize', TradeSkillUIImproved, 'OptionsSliderTemplate')
-TradeSkillUIImproved_OptionsSliderSize:SetWidth(585)
-TradeSkillUIImproved_OptionsSliderSize:SetHeight(13)
-TradeSkillUIImproved_OptionsSliderSize:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsTitle, 'BOTTOMLEFT', 5, -50)
-TradeSkillUIImproved_OptionsSliderSize.tooltipText = L["Allow to change de factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."]
-TradeSkillUIImproved_OptionsSliderSize:SetValueStep(1)
-TradeSkillUIImproved_OptionsSliderSize:SetMinMaxValues(27, 65)
-TradeSkillUIImproved_OptionsSliderSizeText:SetText(L["Size factor"])
-TradeSkillUIImproved_OptionsSliderSizeLow:SetText('27')
-TradeSkillUIImproved_OptionsSliderSizeHigh:SetText('65')
-
-local TradeSkillUIImproved_OptionsSliderSizeValueBox = CreateFrame('editbox', nil, TradeSkillUIImproved_OptionsSliderSize)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetPoint('TOP', TradeSkillUIImproved_OptionsSliderSize, 'BOTTOM', 0, 0)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetSize(60, 14)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetFontObject(GameFontHighlightSmall)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetMaxLetters(2)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetAutoFocus(false)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetJustifyH('CENTER')
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnEscapePressed', function(self)
-    self:SetText(TradeSkillUIImprovedDB.options.factor)
-    self:ClearFocus()
-end)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnEnterPressed', function(self)
-    local value = tonumber(self:GetText()) or TradeSkillUIImprovedDB.options.factor or 27
-    TradeSkillUIImproved_OptionsSliderSize:SetValue(value)
-    TradeSkillUIImprovedDB.options.factor = value
-    self:SetText(value)
-    self:ClearFocus()
-end)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdrop({
-    bgFile = 'Interface/ChatFrame/ChatFrameBackground',
-    edgeFile = 'Interface/ChatFrame/ChatFrameBackground',
-    tile = true, edgeSize = 1, tileSize = 5,
-})
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdropColor(0, 0, 0, 0.5)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.8)
-
-TradeSkillUIImproved_OptionsSliderSize:HookScript('OnValueChanged', function(_, value)
-    TradeSkillUIImprovedDB.options.factor = value
-    TradeSkillUIImproved_OptionsSliderSizeValueBox:SetText(floor(value))
-    TradeSkillUIImproved_OptionsSliderSizeValueBox:SetCursorPosition(0) -- Fix value not showing up
-end)
-TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnChar', function(self)
-    self:SetText(self:GetText():gsub('[^%.0-9]+', ''):gsub('(%..*)%.', '%1'))
-end)
-
-InterfaceOptions_AddCategory(TradeSkillUIImproved)
-
-hooksecurefunc('ContainerFrame_Update', function(self)
-    local id = self:GetID()
-    local name = self:GetName()
-	local itemButton
-
-    for i = 1, self.size, 1 do
-		itemButton = _G[name.."Item"..i]
-
-        local itemLink = GetContainerItemLink(id, itemButton:GetID())
-
-        if itemLink then
-            TradeSkillUIImproved_GameTooltipFrame:ClearLines()
-            TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
-
-            for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
-                local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
-                if text == ITEM_SPELL_KNOWN then
-                    SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
-                    SetItemButtonNormalTextureVertexColor(itemButton, 1, 1, 0)
-                end
-            end
-        end
-    end
-end)
-
 TradeSkillUIImproved:SetScript('OnEvent', function(self, event, ...)
-    if event == 'ADDON_LOADED' and (...) == 'Blizzard_AuctionUI' then
-        self:UnregisterEvent(event)
-
-        hooksecurefunc('AuctionFrameBrowse_Update', function()
-            local numBatchAuctions = GetNumAuctionItems("list")
-            local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
-            local index_item, buttonTexture
-
-            for i = 1, NUM_BROWSE_TO_DISPLAY do
-                index_item = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
-
-                local shouldHide = index_item > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page))
-                if (not shouldHide) then
-                    local itemLink = GetAuctionItemLink('list', offset + i)
-
-                    if itemLink then
-                        TradeSkillUIImproved_GameTooltipFrame:ClearLines()
-                        TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
-
-                        for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
-                            local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
-                            if text == ITEM_SPELL_KNOWN then
-                                buttonTexture = _G['BrowseButton'..i..'ItemIconTexture']
-                                buttonTexture:SetVertexColor(1, 1, 0)
-                            end
-                        end
-                    end
-                end
-            end
-        end)
-    elseif event == 'PLAYER_LOGIN' then
-        -- Ensure options exists in the saved variable. If options have been added in a
-        -- new version and a player use a v-1 version of the addon, an error may be
-        -- thrown because the saved variable is already created, so the default
-        -- settings have not been used, so the new options do not exists.
+    if event == 'PLAYER_LOGIN' then
         if TradeSkillUIImprovedDB.options == nil then
             TradeSkillUIImprovedDB.options = {
                 hideAuctionator = true,
                 factor = 55,
+                colorRecipe = true,
             }
         elseif TradeSkillUIImprovedDB.options.hideAuctionator == nil then
             TradeSkillUIImprovedDB.options.hideAuctionator = true
         elseif TradeSkillUIImprovedDB.options.factor == nil then
             TradeSkillUIImprovedDB.options.factor = 55
+        elseif TradeSkillUIImprovedDB.options.colorRecipe == nil then
+            TradeSkillUIImprovedDB.options.colorRecipe = true
         end
+
+        if TradeSkillUIImprovedDB.options.colorRecipe then
+            hooksecurefunc('ContainerFrame_Update', function(self)
+                local id = self:GetID()
+                local name = self:GetName()
+                local itemButton
+
+                for i = 1, self.size, 1 do
+                    itemButton = _G[name.."Item"..i]
+
+                    TradeSkillUIImproved_ParseTextGameToolTip(GetContainerItemLink(id, itemButton:GetID()),  function()
+                        SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
+                        SetItemButtonNormalTextureVertexColor(itemButton, 1, 1, 0)
+                    end)
+                end
+            end)
+
+            hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
+                local numMerchantItems = GetMerchantNumItems()
+                local indexItem
+
+                for i = 1, MERCHANT_ITEMS_PER_PAGE do
+                    indexItem = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
+
+                    if (indexItem <= numMerchantItems) then
+                        TradeSkillUIImproved_ParseTextGameToolTip(GetMerchantItemLink(indexItem),  function()
+                            local itemButton = _G["MerchantItem"..i.."ItemButton"]
+                            local merchantButton = _G["MerchantItem"..i]
+                            SetItemButtonNameFrameVertexColor(merchantButton, 1, 1, 0)
+                            SetItemButtonSlotVertexColor(merchantButton, 1, 1, 0)
+                            SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
+                            SetItemButtonNormalTextureVertexColor(itemButton, 1, 1, 0)
+                        end)
+                    end
+                end
+            end)
+
+            hooksecurefunc('AuctionFrameBrowse_Update', function()
+                local numBatchAuctions = GetNumAuctionItems("list")
+                local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
+                local indexItem, buttonTexture
+
+                for i = 1, NUM_BROWSE_TO_DISPLAY do
+                    indexItem = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
+
+                    local shouldHide = indexItem > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page))
+                    if (not shouldHide) then
+                        TradeSkillUIImproved_ParseTextGameToolTip(GetAuctionItemLink('list', offset + i),  function()
+                            buttonTexture = _G['BrowseButton'..i..'ItemIconTexture']
+                            buttonTexture:SetVertexColor(1, 1, 0)
+                        end)
+                    end
+                end
+            end)
+        end
+
+        local TradeSkillUIImproved_OptionsTitle = TradeSkillUIImproved:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
+        TradeSkillUIImproved_OptionsTitle:SetPoint('TOPLEFT', 16, -16)
+        TradeSkillUIImproved_OptionsTitle:SetText(addonName)
+
+        local TradeSkillUIImproved_OptionsCheckBoxAuctionator = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxAuctionator', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+        TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsTitle, 'BOTTOMLEFT', 0, -5)
+        TradeSkillUIImproved_OptionsCheckBoxAuctionator.tooltipText = L["The addon Auctionator had a button in the tradeskill UI. This options allow you to hide that button.\n\nA reload is necessary."]
+        TradeSkillUIImproved_OptionsCheckBoxAuctionatorText:SetText(L["Hide the AH button if the addon Auctionator is loaded."])
+        TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetChecked(TradeSkillUIImprovedDB.options.hideAuctionator)
+        TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetScript('OnClick', function(self)
+            TradeSkillUIImprovedDB.options.hideAuctionator = self:GetChecked()
+        end)
+
+        local TradeSkillUIImproved_OptionsCheckBoxRecipe = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipe', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+        TradeSkillUIImproved_OptionsCheckBoxRecipe:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxAuctionator, 'BOTTOMLEFT', 0, -3)
+        TradeSkillUIImproved_OptionsCheckBoxRecipe.tooltipText = L["Change the color of an icon if the item (merchant, auction, bag, bank) is already learned.\n\nA reload is necessary."]
+        TradeSkillUIImproved_OptionsCheckBoxRecipeText:SetText(L["Change the color of an icon if the item is already learned."])
+        TradeSkillUIImproved_OptionsCheckBoxRecipe:SetChecked(TradeSkillUIImprovedDB.options.colorRecipe)
+        TradeSkillUIImproved_OptionsCheckBoxRecipe:SetScript('OnClick', function(self)
+            TradeSkillUIImprovedDB.options.colorRecipe = self:GetChecked()
+        end)
+
+        local TradeSkillUIImproved_OptionsSliderSize = CreateFrame('Slider', 'TradeSkillUIImproved_OptionsSliderSize', TradeSkillUIImproved, 'OptionsSliderTemplate')
+        TradeSkillUIImproved_OptionsSliderSize:SetWidth(585)
+        TradeSkillUIImproved_OptionsSliderSize:SetHeight(13)
+        TradeSkillUIImproved_OptionsSliderSize:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipe, 'BOTTOMLEFT', 0, -15)
+        TradeSkillUIImproved_OptionsSliderSize.tooltipText = L["Allow to change the factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."]
+        TradeSkillUIImproved_OptionsSliderSize:SetValueStep(1)
+        TradeSkillUIImproved_OptionsSliderSize:SetMinMaxValues(27, 65)
+        TradeSkillUIImproved_OptionsSliderSizeText:SetText(L["Size factor"])
+        TradeSkillUIImproved_OptionsSliderSizeLow:SetText('27')
+        TradeSkillUIImproved_OptionsSliderSizeHigh:SetText('65')
+
+        local TradeSkillUIImproved_OptionsSliderSizeValueBox = CreateFrame('editbox', nil, TradeSkillUIImproved_OptionsSliderSize)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetPoint('TOP', TradeSkillUIImproved_OptionsSliderSize, 'BOTTOM', 0, 0)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetSize(60, 14)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetFontObject(GameFontHighlightSmall)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetMaxLetters(2)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetAutoFocus(false)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetJustifyH('CENTER')
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnEscapePressed', function(self)
+            self:SetText(TradeSkillUIImprovedDB.options.factor)
+            self:ClearFocus()
+        end)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnEnterPressed', function(self)
+            local value = tonumber(self:GetText()) or TradeSkillUIImprovedDB.options.factor or 27
+            TradeSkillUIImproved_OptionsSliderSize:SetValue(value)
+            TradeSkillUIImprovedDB.options.factor = value
+            self:SetText(value)
+            self:ClearFocus()
+        end)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdrop({
+            bgFile = 'Interface/ChatFrame/ChatFrameBackground',
+            edgeFile = 'Interface/ChatFrame/ChatFrameBackground',
+            tile = true, edgeSize = 1, tileSize = 5,
+        })
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdropColor(0, 0, 0, 0.5)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.8)
+
+        TradeSkillUIImproved_OptionsSliderSize:HookScript('OnValueChanged', function(_, value)
+            TradeSkillUIImprovedDB.options.factor = value
+            TradeSkillUIImproved_OptionsSliderSizeValueBox:SetText(floor(value))
+            TradeSkillUIImproved_OptionsSliderSizeValueBox:SetCursorPosition(0) -- Fix value not showing up
+        end)
+        TradeSkillUIImproved_OptionsSliderSizeValueBox:SetScript('OnChar', function(self)
+            self:SetText(self:GetText():gsub('[^%.0-9]+', ''):gsub('(%..*)%.', '%1'))
+        end)
+
+        InterfaceOptions_AddCategory(TradeSkillUIImproved)
 
         if TradeSkillUIImprovedDB.options.hideAuctionator and IsAddOnLoaded('Auctionator') then
             Auctionator_Search:Hide()
@@ -235,51 +299,35 @@ TradeSkillUIImproved:SetScript('OnEvent', function(self, event, ...)
     elseif event == 'TRADE_SKILL_DATA_SOURCE_CHANGED' then
 		if not InCombatLockdown() then
             for i = 1, index do
-                _G['TradeSkillUIImprovedTab' .. i]:Hide()
+                local tab = _G['TradeSkillUIImprovedTab' .. i]
+                if tab then
+                    tab:UnregisterEvent('TRADE_SKILL_SHOW')
+                    tab:UnregisterEvent('CURRENT_SPELL_CAST_CHANGED')
+                    tab:Hide()
+                end
             end
 
             index = 0
 
             local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
             for _, id in pairs({prof1, prof2, cooking, archaeology, fishing, (IsSpellKnown(runeforgingId) and runeforgingId or nil)}) do
-                index = index + 1
-
-                local name, icon, spellID
+                local numAbilities, name, icon, spellID, specializationIndex
                 if id == runeforgingId then
-                    name, _, icon, _, _, _, spellID = GetSpellInfo(runeforgingId)
+                    factoryCheckButton(id, index)
                 else
-                    name, _, icon, _, _, _, spellID = GetSpellInfo(select(2, GetSpellBookItemInfo(select(6, GetProfessionInfo(id)) + 1, BOOKTYPE_PROFESSION)))
+                    _, _, _, _, numAbilities, spelloffset, _, _, specializationIndex = GetProfessionInfo(id)
+
+                    for i = 1, numAbilities do
+                        factoryCheckButton(select(2, GetSpellBookItemInfo(spelloffset + i, BOOKTYPE_PROFESSION)), index)
+                    end
                 end
-
-                local tab = _G['TradeSkillUIImprovedTab' .. index] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. index, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
-                tab.tooltip = name
-                tab.id = spellID
-
-                if IsCurrentSpell(name) then
-                    tab:SetChecked(true)
-                    tab:RegisterForClicks(nil)
-                else
-                    tab:SetChecked(false)
-                    tab:RegisterForClicks('AnyDown')
-                end
-
-                tab:SetNormalTexture(icon)
-                if spellID == cookingId or spellID == fishingId or spellID == archaeologyId or spellID == runeforgingId then
-                    tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1.5))
-                else
-                    tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1))
-                end
-
-                tab:Show()
-                tab:SetAttribute('type', 'spell')
-                tab:SetAttribute('spell', name)
             end
 		end
         SearchBox:SetText(searchText)
     elseif event == 'ARCHAEOLOGY_CLOSED' then -- Fix the highlight of Archaeology when the frame is not closed with the checkbox tab frame.
         for i = 1, index do
             local tab = _G['TradeSkillUIImprovedTab' .. i]
-            if tab and tab.id == 195127 then
+            if tab and tab.id == archaeologyId then
                 tab:SetChecked(false)
             end
         end
@@ -360,35 +408,6 @@ end
 
 SLASH_TSUII1, SLASH_TSUII2 = '/TSUII', '/TradeSkillUIImproved'
 SlashCmdList["TSUII"] = TradeSkillUIImproved_SlashCmd
-
-hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-    local numMerchantItems = GetMerchantNumItems()
-
-    for i = 1, MERCHANT_ITEMS_PER_PAGE do
-        local index_item = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
-
-        if (index_item <= numMerchantItems) then
-            local itemLink = GetMerchantItemLink(index_item)
-
-            if itemLink then
-                TradeSkillUIImproved_GameTooltipFrame:ClearLines()
-                TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
-
-                for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
-                    local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
-                    if text == ITEM_SPELL_KNOWN then
-                        local itemButton = _G["MerchantItem"..i.."ItemButton"]
-                        local merchantButton = _G["MerchantItem"..i]
-                        SetItemButtonNameFrameVertexColor(merchantButton, 1, 1, 0)
-                        SetItemButtonSlotVertexColor(merchantButton, 1, 1, 0)
-                        SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
-                        SetItemButtonNormalTextureVertexColor(itemButton, 1, 1, 0)
-                    end
-                end
-            end
-        end
-    end
-end)
 
 hooksecurefunc('ToggleGameMenu', function()
 	if TradeSkillFrame:IsShown() then
@@ -509,7 +528,7 @@ TradeSkillUIImproved_SelectedRecipeIDButton:SetText('recipeID')
 TradeSkillUIImproved_SelectedRecipeIDButton:SetWidth(85)
 TradeSkillUIImproved_SelectedRecipeIDButton:SetHeight(22)
 TradeSkillUIImproved_SelectedRecipeIDButton:ClearAllPoints()
-TradeSkillUIImproved_SelectedRecipeIDButton:SetPoint('BOTTOMRIGHT', TradeSkillFrame.DetailsFrame.CreateButton, 'BOTTOMRIGHT', 85, 0)
+TradeSkillUIImproved_SelectedRecipeIDButton:SetPoint('BOTTOMRIGHT', DetailsFrame.CreateButton, 'BOTTOMRIGHT', 85, 0)
 TradeSkillUIImproved_SelectedRecipeIDButton:SetScript('OnClick', function()
     local recipeID = RecipeList.selectedRecipeID
     if recipeID ~= nil then

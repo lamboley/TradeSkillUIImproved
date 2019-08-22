@@ -32,7 +32,7 @@ For more documentation, take a look at the [wiki](https://github.com/lamboley/Tr
 
 * English (arlaios)
 * French (arlaios)
-* Chinese traditional ([bns333](https://www.wowace.com/members/bns333/reputation))
+* Traditional Chinese ([bns333](https://www.wowace.com/members/bns333/reputation))
 
 ## Bug know
 

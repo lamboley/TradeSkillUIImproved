@@ -32,4 +32,6 @@ if GetLocale() == "frFR" then
     L["Size factor"] = "Facteur de taille"
     L["Allow to change the factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."] = "Permet de changer le facteur de taille de la fenêtre d'artisanat.\n\nLa valeur par défaut est 55, celle de blizzard est 27.\n\nUn rechargement est nécessaire."
     L["The addon Auctionator had a button in the tradeskill UI. This options allow you to hide that button.\n\nA reload is necessary."] = "L'addon Auctionator ajoute un bouton dans la fenêtre d'artisanat. Cette option vous permet de cacher ce bouton.\n\nUn rechargement est nécessaire."
+    L["Change the color of an icon if the item (merchant, auction, bag, bank) is already learned.\n\nA reload is necessary."] = "Change la couleur de l'icon (Marchant, Hôtel de vente, Sac, Banque de guile) si l'objet est déjà appris.\n\nUn rechargement est nécessaire."
+    L["Change the color of an icon if the item is already learned."] = "Change la couleur de l'icon si l'objet est déjà appris."
 end
