@@ -61,4 +61,5 @@ globals = {
         "GetMerchantItemLink",
         "SetItemButtonNameFrameVertexColor",
         "SetItemButtonSlotVertexColor",
+        "TradeSkillUIImproved_OptionsCheckBoxRecipeText",
 }

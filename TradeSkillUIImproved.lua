@@ -10,9 +10,6 @@ local fishingPoleId = 131474
 local archaeologyId = 195127
 local digId = 80451
 
-local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
-local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
-
 local CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell, HideUIPanel
     = CreateFrame, InCombatLockdown, GetSpellInfo, GetProfessions, IsCurrentSpell, HideUIPanel
 local GetCategories, GetSubCategories, GetRecipeInfo, GetCategoryInfo
@@ -28,6 +25,9 @@ local SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, Ge
 local SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
     = SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
 
+local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
+local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
+
 TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or {
     options = {
         hideAuctionator = true,
@@ -38,6 +38,9 @@ TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or {
     y = 1050,
     BlackList = {},
 }
+
+local TradeSkillUIImproved_GameTooltipFrame = CreateFrame("GameTooltip", "TradeSkillUIImproved_GameTooltipFrame", nil, "GameTooltipTemplate")
+TradeSkillUIImproved_GameTooltipFrame:SetOwner(UIParent, "ANCHOR_NONE")
 
 local function TradeSkillUIImproved_ParseTextGameToolTip(itemLink, changeVertexColor)
     if itemLink then
@@ -106,9 +109,6 @@ local function factoryCheckButton(id)
     isCurrentTab(tab)
 end
 
-local TradeSkillUIImproved_GameTooltipFrame = CreateFrame("GameTooltip", "TradeSkillUIImproved_GameTooltipFrame", nil, "GameTooltipTemplate")
-TradeSkillUIImproved_GameTooltipFrame:SetOwner(UIParent, "ANCHOR_NONE")
-
 local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
 TradeSkillUIImproved.name = addonName
 
@@ -117,7 +117,7 @@ TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_LIST_UPDATE')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_DATA_SOURCE_CHANGED')
 TradeSkillUIImproved:RegisterEvent('ARCHAEOLOGY_CLOSED')
 
-TradeSkillUIImproved:SetScript('OnEvent', function(self, event, ...)
+TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
     if event == 'PLAYER_LOGIN' then
         if TradeSkillUIImprovedDB.options == nil then
             TradeSkillUIImprovedDB.options = {
@@ -311,14 +311,13 @@ TradeSkillUIImproved:SetScript('OnEvent', function(self, event, ...)
 
             local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
             for _, id in pairs({prof1, prof2, cooking, archaeology, fishing, (IsSpellKnown(runeforgingId) and runeforgingId or nil)}) do
-                local numAbilities, name, icon, spellID, specializationIndex
                 if id == runeforgingId then
                     factoryCheckButton(id, index)
                 else
-                    _, _, _, _, numAbilities, spelloffset, _, _, specializationIndex = GetProfessionInfo(id)
+                    local _, _, _, _, numAbilities, spellOffset = GetProfessionInfo(id)
 
                     for i = 1, numAbilities do
-                        factoryCheckButton(select(2, GetSpellBookItemInfo(spelloffset + i, BOOKTYPE_PROFESSION)), index)
+                        factoryCheckButton(select(2, GetSpellBookItemInfo(spellOffset + i, BOOKTYPE_PROFESSION)), index)
                     end
                 end
             end
