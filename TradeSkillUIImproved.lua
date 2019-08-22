@@ -1,7 +1,10 @@
-local _, L = ...
+local addonName, L = ...
+local _G = _G
+
 local index = 0
 
 local searchText = ''
+
 local runeforgingId = 53428
 local cookingId = 2550
 local firecampId = 818
@@ -18,15 +21,14 @@ local CloseTradeSkill, SetOnlyShowMakeableRecipes, SetOnlyShowSkillUpRecipes
     = C_TradeSkillUI.CloseTradeSkill, C_TradeSkillUI.SetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes
 local TradeSkillFrame, DetailsFrame, FilterButton, RankFrame, SearchBox, RecipeList
     = TradeSkillFrame, TradeSkillFrame.DetailsFrame, TradeSkillFrame.FilterButton, TradeSkillFrame.RankFrame, TradeSkillFrame.SearchBox, TradeSkillFrame.RecipeList
-local GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, GetMerchantNumItems
-    = GetAddOnMetadata, IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, GetMerchantNumItems
+local IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, GetMerchantNumItems
+    = IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, GetMerchantNumItems
 local SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
     = SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
 local SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
     = SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
 
-local addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title')
-local addonVersion = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
+local addonVersion = GetAddOnMetadata(addonName, 'Version')
 
 TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or {
     options = {
@@ -39,8 +41,8 @@ TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or {
     BlackList = {},
 }
 
-local TradeSkillUIImproved_GameTooltipFrame = CreateFrame("GameTooltip", "TradeSkillUIImproved_GameTooltipFrame", nil, "GameTooltipTemplate")
-TradeSkillUIImproved_GameTooltipFrame:SetOwner(UIParent, "ANCHOR_NONE")
+local TradeSkillUIImproved_GameTooltipFrame = CreateFrame('GameTooltip', nil, nil, 'GameTooltipTemplate')
+TradeSkillUIImproved_GameTooltipFrame:SetOwner(UIParent, 'ANCHOR_NONE')
 
 local function TradeSkillUIImproved_ParseTextGameToolTip(itemLink, changeVertexColor)
     if itemLink then
@@ -48,7 +50,7 @@ local function TradeSkillUIImproved_ParseTextGameToolTip(itemLink, changeVertexC
         TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
 
         for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
-            local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft'..li]:GetText()
+            local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft' .. li]:GetText()
             if text == ITEM_SPELL_KNOWN then
                 changeVertexColor()
             end
@@ -69,7 +71,7 @@ local function IsInTable(l, e)
     return false
 end
 
-local function isCurrentTab(self)
+local function IsCurrentTab(self)
     if self.tooltip and IsCurrentSpell(self.tooltip) then
         self:SetChecked(true)
         if self.id == archaeologyId then
@@ -83,13 +85,13 @@ local function isCurrentTab(self)
     end
 end
 
-local function factoryCheckButton(id)
+local function FactoryCheckButton(id)
     index = index + 1
 
     local name, _, icon, _, _, _, spellID = GetSpellInfo(id)
 
     local tab = _G['TradeSkillUIImprovedTab' .. index] or CreateFrame('CheckButton', 'TradeSkillUIImprovedTab' .. index, TradeSkillFrame, 'SpellBookSkillLineTabTemplate, SecureActionButtonTemplate')
-    tab:SetScript('OnEvent', isCurrentTab)
+    tab:SetScript('OnEvent', IsCurrentTab)
     tab:RegisterEvent('TRADE_SKILL_SHOW')
     tab:RegisterEvent('CURRENT_SPELL_CAST_CHANGED')
     tab.tooltip = name
@@ -106,11 +108,10 @@ local function factoryCheckButton(id)
     tab:SetAttribute('type', 'spell')
     tab:SetAttribute('spell', name)
 
-    isCurrentTab(tab)
+    IsCurrentTab(tab)
 end
 
-local TradeSkillUIImproved = CreateFrame('Frame', 'TradeSkillUIImproved')
-TradeSkillUIImproved.name = addonName
+local TradeSkillUIImproved = CreateFrame('Frame', addonName)
 
 TradeSkillUIImproved:RegisterEvent('PLAYER_LOGIN')
 TradeSkillUIImproved:RegisterEvent('TRADE_SKILL_LIST_UPDATE')
@@ -158,8 +159,8 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
 
                     if (indexItem <= numMerchantItems) then
                         TradeSkillUIImproved_ParseTextGameToolTip(GetMerchantItemLink(indexItem),  function()
-                            local itemButton = _G["MerchantItem"..i.."ItemButton"]
-                            local merchantButton = _G["MerchantItem"..i]
+                            local itemButton = _G['MerchantItem' .. i .. 'ItemButton']
+                            local merchantButton = _G['MerchantItem' .. i]
                             SetItemButtonNameFrameVertexColor(merchantButton, 1, 1, 0)
                             SetItemButtonSlotVertexColor(merchantButton, 1, 1, 0)
                             SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
@@ -177,16 +178,17 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
                 for i = 1, NUM_BROWSE_TO_DISPLAY do
                     indexItem = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
 
-                    local shouldHide = indexItem > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page))
-                    if (not shouldHide) then
+                    if (not (indexItem > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)))) then
                         TradeSkillUIImproved_ParseTextGameToolTip(GetAuctionItemLink('list', offset + i),  function()
-                            buttonTexture = _G['BrowseButton'..i..'ItemIconTexture']
+                            buttonTexture = _G['BrowseButton' .. i .. 'ItemIconTexture']
                             buttonTexture:SetVertexColor(1, 1, 0)
                         end)
                     end
                 end
             end)
         end
+
+        TradeSkillUIImproved.name = addonName
 
         local TradeSkillUIImproved_OptionsTitle = TradeSkillUIImproved:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
         TradeSkillUIImproved_OptionsTitle:SetPoint('TOPLEFT', 16, -16)
@@ -312,12 +314,12 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
             for _, id in pairs({prof1, prof2, cooking, archaeology, fishing, (IsSpellKnown(runeforgingId) and runeforgingId or nil)}) do
                 if id == runeforgingId then
-                    factoryCheckButton(id, index)
+                    FactoryCheckButton(id, index)
                 else
                     local _, _, _, _, numAbilities, spellOffset = GetProfessionInfo(id)
 
                     for i = 1, numAbilities do
-                        factoryCheckButton(select(2, GetSpellBookItemInfo(spellOffset + i, BOOKTYPE_PROFESSION)), index)
+                        FactoryCheckButton(select(2, GetSpellBookItemInfo(spellOffset + i, BOOKTYPE_PROFESSION)), index)
                     end
                 end
             end
@@ -333,7 +335,8 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
     end
 end)
 
-local function TradeSkillUIImproved_SlashCmd(msg)
+SLASH_TSUII1, SLASH_TSUII2 = '/TSUII', '/TradeSkillUIImproved'
+SlashCmdList["TSUII"] = function(msg)
     local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)")
 
     if cmd == 'addBL' and args ~= '' then
@@ -401,12 +404,9 @@ local function TradeSkillUIImproved_SlashCmd(msg)
         print('  |cfffff194showBL [' .. L["substring"] .. ']|r - ' .. L["Show the data of the blacklist. If an argument is passed, a pattern case-sensitive while be executed on the recipeID and the name."])
         print('  |cfffff194isBL|r - ' .. L["Show if the recipeID is in the blacklist."])
         print('  |cfffff194version|r - ' .. L["Show the version fo the addon."])
-        print('  |cfffff194options|r - ' .. L["Show the options window."])
+        print('  |cfffff194options|r - ' .. L["Show the option window."])
     end
 end
-
-SLASH_TSUII1, SLASH_TSUII2 = '/TSUII', '/TradeSkillUIImproved'
-SlashCmdList["TSUII"] = TradeSkillUIImproved_SlashCmd
 
 hooksecurefunc('ToggleGameMenu', function()
 	if TradeSkillFrame:IsShown() then

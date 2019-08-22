@@ -30,9 +30,13 @@ For more documentation, take a look at the [wiki](https://github.com/lamboley/Tr
 
 ## Localization
 
+If you want to contribute to the translation, look at the [localization tab](https://www.wowace.com/projects/tradeskilluiimproved/localization)
+
+Current supported language :
+
 * English (arlaios)
 * French (arlaios)
-* Traditional Chinese ([bns333](https://www.wowace.com/members/bns333/reputation))
+* Traditional Chinese ([BNS333](https://www.wowace.com/members/bns333/reputation))
 
 ## Bug know
 
