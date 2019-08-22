@@ -30,6 +30,6 @@ if GetLocale() == "zhTW" then
     L["No recipe is selected."] = "沒有已選的配方。"
     L["Hide the AH button if the addon Auctionator is loaded."] = "當插件Auctionator載入時隱藏AH按鈕。"
     L["Size factor"] = "尺寸係數"
-    L["Allow to change de factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."] = "允許更改tradeskill UI大小的de factor。\n\n預設值為55，暴雪的預設值為27. \n\n需要重載。"
+    L["Allow to change the factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."] = "允許更改tradeskill UI大小的the factor。\n\n預設值為55，暴雪的預設值為27. \n\n需要重載。"
     L["The addon Auctionator had a button in the tradeskill UI. This options allow you to hide that button.\n\nA reload is necessary."] = "插件Auctionator在專業技能介面中有一個按鈕。 此選項允許您隱藏該按鈕。\n\n需要重載。"
 end
