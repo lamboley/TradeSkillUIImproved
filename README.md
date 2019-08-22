@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lamboley/TradeSkillUIImproved.svg?branch=master)](https://travis-ci.org/lamboley/TradeSkillUIImproved)
+[![Travis (.org) branch](https://img.shields.io/travis/lamboley/TradeSkillUIImproved/master?label=Build)](https://travis-ci.org/lamboley/TradeSkillUIImproved)
 [![Version](https://img.shields.io/github/v/tag/lamboley/TradeSkillUIImproved.svg?label=Version&style=popout)](https://www.wowace.com/projects/tradeskilluiimproved/files)
 [![Tracker](https://img.shields.io/github/issues/lamboley/TradeSkillUIImproved.svg?label=Issues&style=popout)](https://github.com/lamboley/TradeSkillUIImproved/issues)
 
