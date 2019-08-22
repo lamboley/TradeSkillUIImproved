@@ -8,3 +8,4 @@ ignore:
   - .luacheckrc
   - .travis.yml
   - README.md
+  - LICENSE
