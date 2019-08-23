@@ -3,6 +3,15 @@ Changelog
 =========
 
 
+1.1.0 (2019-08-23)
+------------------
+
+- Add interface options
+- Remove getSize and setSize slash command.
+- Add feature for coloring recipe in yallow if already know.
+- Add active spell of profession as tab frame.
+- Add traditional chinese localization
+
 1.0.5 (2019-08-16)
 ------------------
 

@@ -2,7 +2,6 @@ local addonName, L = ...
 local _G = _G
 
 local index = 0
-
 local searchText = ''
 
 local runeforgingId = 53428
@@ -33,6 +32,8 @@ TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or {
         hideAuctionator = true,
         factor = 55,
         colorRecipe = true,
+        colorRecipeBag = false,
+        colorRecipeBank = false,
     },
     x = 200,
     y = 1050,
@@ -227,10 +228,9 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             TradeSkillUIImprovedDB.options.hideAuctionator = self:GetChecked()
         end)
 
-
         local TradeSkillUIImproved_OptionsCheckBoxRecipeBag = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipeBag', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
-        TradeSkillUIImproved_OptionsCheckBoxRecipeBag.tooltipText = L["Change the color of an icon if the item (merchant, auction, bag, bank) is already learned.\n\nA reload is necessary."]
-        TradeSkillUIImproved_OptionsCheckBoxRecipeBagText:SetText(L["Change the color of an icon if the item is already learned."])
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBag.tooltipText = L["Change the color of an icon if an item in the bag is already learned.\n\nA reload is necessary."]
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBagText:SetText(L["Change the color in the bag."])
         TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetChecked(TradeSkillUIImprovedDB.options.colorRecipeBag)
         TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetEnabled(TradeSkillUIImprovedDB.options.colorRecipe)
         TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetScript('OnClick', function(self)
@@ -238,8 +238,8 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
         end)
 
         local TradeSkillUIImproved_OptionsCheckBoxRecipeBank = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipeBank', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
-        TradeSkillUIImproved_OptionsCheckBoxRecipeBank.tooltipText = L["Change the color of an icon if the item (merchant, auction, bag, bank) is already learned.\n\nA reload is necessary."]
-        TradeSkillUIImproved_OptionsCheckBoxRecipeBankText:SetText(L["Change the color of an icon if the item is already learned."])
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBank.tooltipText = L["Change the color of an icon if an item in the bank is already learned.\n\nA reload is necessary."]
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBankText:SetText(L["Change the color in the bank."])
         TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetChecked(TradeSkillUIImprovedDB.options.colorRecipeBank)
         TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetEnabled(TradeSkillUIImprovedDB.options.colorRecipe)
         TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetScript('OnClick', function(self)

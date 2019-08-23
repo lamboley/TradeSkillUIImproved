@@ -14,15 +14,11 @@ TradeSkillUIImproved improve the default tradeskill UI. His major feature allow 
 * Add two button for collapse and expand all recipe.
 * Add two checkbox for filter has materials and has skill up.
 * Add tab frame for switching profession on the main frame.
+* Add active profession spell as tab frame.
 * Replace the 'Quit' button by a button which print in chat the id of the selected recipe (recipeID).
 * If the addon Auctionator is installed, hide the 'AH' button in the tradeskill UI.
 * Add a system of blacklist of recipe and sub-header for hidding them in the tradeskill UI.
-
-## Incoming features
-
-* Changing the color of the icon of a recipe in yellow in a merchant, auction, bag and bank if you have already learned the recipe.
-* Active profession spell (camp fire, disenchant, skinning, etc) as a tab frame.
-* Interface option for settings with a beautiful window instead of a slash command.
+* Change the color of an icon in yellow in a merchant, auction house, bag and bank if you have already know it.
 
 ## Documentation
 
@@ -41,6 +37,7 @@ Current supported language :
 ## Bug know
 
 * As v1.0.3 you can hide sub-header (sub-category of expansion) but you should not hide header (category of expansion).
+* The feature for the recipe may have some bug with the bank and the guild due to blizzard fault.
 
 ## Issues
 
