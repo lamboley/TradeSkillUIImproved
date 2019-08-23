@@ -62,4 +62,6 @@ globals = {
         "SetItemButtonNameFrameVertexColor",
         "SetItemButtonSlotVertexColor",
         "TradeSkillUIImproved_OptionsCheckBoxRecipeText",
+        "TradeSkillUIImproved_OptionsCheckBoxRecipeBagText",
+        "TradeSkillUIImproved_OptionsCheckBoxRecipeBankText",
 }
