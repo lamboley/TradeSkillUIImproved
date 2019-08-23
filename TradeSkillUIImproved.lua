@@ -41,19 +41,17 @@ TradeSkillUIImprovedDB = TradeSkillUIImprovedDB or {
     BlackList = {},
 }
 
-local TradeSkillUIImproved_GameTooltipFrame = CreateFrame('GameTooltip', nil, nil, 'GameTooltipTemplate')
+local TradeSkillUIImproved_GameTooltipFrame = CreateFrame('GameTooltip', 'TradeSkillUIImproved_GameTooltipFrame', nil, 'GameTooltipTemplate')
 TradeSkillUIImproved_GameTooltipFrame:SetOwner(UIParent, 'ANCHOR_NONE')
 
 local function TradeSkillUIImproved_ParseTextGameToolTip(itemLink, changeVertexColor)
-    if itemLink then
-        TradeSkillUIImproved_GameTooltipFrame:ClearLines()
-        TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
+    TradeSkillUIImproved_GameTooltipFrame:ClearLines()
+    TradeSkillUIImproved_GameTooltipFrame:SetHyperlink(itemLink)
 
-        for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
-            local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft' .. li]:GetText()
-            if text == ITEM_SPELL_KNOWN then
-                changeVertexColor()
-            end
+    for li = 2, TradeSkillUIImproved_GameTooltipFrame:NumLines() do
+        local text = _G['TradeSkillUIImproved_GameTooltipFrameTextLeft' .. li]:GetText()
+        if text == ITEM_SPELL_KNOWN then
+            changeVertexColor()
         end
     end
 end
@@ -138,34 +136,48 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             hooksecurefunc('ContainerFrame_Update', function(self)
                 local id = self:GetID()
                 local name = self:GetName()
-                local itemButton
 
                 for i = 1, self.size, 1 do
-                    itemButton = _G[name.."Item"..i]
+                    local itemButton = _G[name .. 'Item' .. i]
 
-                    TradeSkillUIImproved_ParseTextGameToolTip(GetContainerItemLink(id, itemButton:GetID()),  function()
-                        SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
-                        SetItemButtonNormalTextureVertexColor(itemButton, 1, 1, 0)
-                    end)
+                    local itemLink = GetContainerItemLink(id, itemButton:GetID())
+
+                    if itemLink then
+                        TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
+                            SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
+                        end)
+                    end
+                end
+            end)
+
+            hooksecurefunc('BankFrameItemButton_Update', function(button)
+                local container = button:GetParent():GetID()
+                local buttonID = button:GetID()
+                if not button.isBag then
+                    local itemLink = GetContainerItemLink(container, buttonID)
+
+                    if itemLink then
+                        TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
+                                SetItemButtonTextureVertexColor(button, 1, 1, 0)
+                        end)
+                    end
                 end
             end)
 
             hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
                 local numMerchantItems = GetMerchantNumItems()
-                local indexItem
 
                 for i = 1, MERCHANT_ITEMS_PER_PAGE do
-                    indexItem = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
+                    local indexItem = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
 
                     if (indexItem <= numMerchantItems) then
-                        TradeSkillUIImproved_ParseTextGameToolTip(GetMerchantItemLink(indexItem),  function()
-                            local itemButton = _G['MerchantItem' .. i .. 'ItemButton']
-                            local merchantButton = _G['MerchantItem' .. i]
-                            SetItemButtonNameFrameVertexColor(merchantButton, 1, 1, 0)
-                            SetItemButtonSlotVertexColor(merchantButton, 1, 1, 0)
-                            SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
-                            SetItemButtonNormalTextureVertexColor(itemButton, 1, 1, 0)
-                        end)
+                        local itemLink = GetMerchantItemLink(indexItem)
+
+                        if itemLink then
+                            TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
+                                SetItemButtonTextureVertexColor(_G['MerchantItem' .. i .. 'ItemButton'], 1, 1, 0)
+                            end)
+                        end
                     end
                 end
             end)
@@ -176,13 +188,16 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
                 local indexItem, buttonTexture
 
                 for i = 1, NUM_BROWSE_TO_DISPLAY do
-                    indexItem = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
+                    local indexItem = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
 
                     if (not (indexItem > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)))) then
-                        TradeSkillUIImproved_ParseTextGameToolTip(GetAuctionItemLink('list', offset + i),  function()
-                            buttonTexture = _G['BrowseButton' .. i .. 'ItemIconTexture']
-                            buttonTexture:SetVertexColor(1, 1, 0)
-                        end)
+                        local itemLink = GetAuctionItemLink('list', offset + i)
+
+                        if itemLink then
+                            TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
+                                SetItemButtonTextureVertexColor(_G['BrowseButton' .. i], 1, 1, 0)
+                            end)
+                        end
                     end
                 end
             end)
@@ -403,7 +418,7 @@ SlashCmdList["TSUII"] = function(msg)
         print('  |cfffff194delBL|r - ' .. L["Delete the recipeID from the blacklist."])
         print('  |cfffff194showBL [' .. L["substring"] .. ']|r - ' .. L["Show the data of the blacklist. If an argument is passed, a pattern case-sensitive while be executed on the recipeID and the name."])
         print('  |cfffff194isBL|r - ' .. L["Show if the recipeID is in the blacklist."])
-        print('  |cfffff194version|r - ' .. L["Show the version fo the addon."])
+        print('  |cfffff194version|r - ' .. L["Show the version of the addon."])
         print('  |cfffff194options|r - ' .. L["Show the option window."])
     end
 end
