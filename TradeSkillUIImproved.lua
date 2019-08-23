@@ -121,6 +121,8 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
                 hideAuctionator = true,
                 factor = 55,
                 colorRecipe = true,
+                colorRecipeBag = false,
+                colorRecipeBank = false,
             }
         elseif TradeSkillUIImprovedDB.options.hideAuctionator == nil then
             TradeSkillUIImprovedDB.options.hideAuctionator = true
@@ -128,39 +130,47 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             TradeSkillUIImprovedDB.options.factor = 55
         elseif TradeSkillUIImprovedDB.options.colorRecipe == nil then
             TradeSkillUIImprovedDB.options.colorRecipe = true
+        elseif TradeSkillUIImprovedDB.options.colorRecipeBag == nil then
+            TradeSkillUIImprovedDB.options.colorRecipeBag = false
+        elseif TradeSkillUIImprovedDB.options.colorRecipeBank == nil then
+            TradeSkillUIImprovedDB.options.colorRecipeBank = false
         end
 
         if TradeSkillUIImprovedDB.options.colorRecipe then
-            hooksecurefunc('ContainerFrame_Update', function(self)
-                local id = self:GetID()
-                local name = self:GetName()
+            if TradeSkillUIImprovedDB.options.colorRecipeBag then
+                hooksecurefunc('ContainerFrame_Update', function(self)
+                    local id = self:GetID()
+                    local name = self:GetName()
 
-                for i = 1, self.size, 1 do
-                    local itemButton = _G[name .. 'Item' .. i]
+                    for i = 1, self.size, 1 do
+                        local itemButton = _G[name .. 'Item' .. i]
 
-                    local itemLink = GetContainerItemLink(id, itemButton:GetID())
+                        local itemLink = GetContainerItemLink(id, itemButton:GetID())
 
-                    if itemLink then
-                        TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
-                            SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
-                        end)
+                        if itemLink then
+                            TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
+                                SetItemButtonTextureVertexColor(itemButton, 1, 1, 0)
+                            end)
+                        end
                     end
-                end
-            end)
+                end)
+            end
 
-            hooksecurefunc('BankFrameItemButton_Update', function(button)
-                local container = button:GetParent():GetID()
-                local buttonID = button:GetID()
-                if not button.isBag then
-                    local itemLink = GetContainerItemLink(container, buttonID)
+            if TradeSkillUIImprovedDB.options.colorRecipeBank then
+                hooksecurefunc('BankFrameItemButton_Update', function(button)
+                    local container = button:GetParent():GetID()
+                    local buttonID = button:GetID()
+                    if not button.isBag then
+                        local itemLink = GetContainerItemLink(container, buttonID)
 
-                    if itemLink then
-                        TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
-                                SetItemButtonTextureVertexColor(button, 1, 1, 0)
-                        end)
+                        if itemLink then
+                            TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
+                                    SetItemButtonTextureVertexColor(button, 1, 1, 0)
+                            end)
+                        end
                     end
-                end
-            end)
+                end)
+            end
 
             hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
                 local numMerchantItems = GetMerchantNumItems()
@@ -183,6 +193,7 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             hooksecurefunc('AuctionFrameBrowse_Update', function()
                 local numBatchAuctions = GetNumAuctionItems("list")
                 local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
+                local buttonTexture
 
                 for i = 1, NUM_BROWSE_TO_DISPLAY do
                     local indexItem = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
@@ -192,7 +203,8 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
 
                         if itemLink then
                             TradeSkillUIImproved_ParseTextGameToolTip(itemLink,  function()
-                                SetItemButtonTextureVertexColor(_G['BrowseButton' .. i], 1, 1, 0)
+                                buttonTexture = _G['BrowseButton' .. i .. 'ItemIconTexture']
+                                buttonTexture:SetVertexColor(1, 1, 0)
                             end)
                         end
                     end
@@ -215,6 +227,25 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             TradeSkillUIImprovedDB.options.hideAuctionator = self:GetChecked()
         end)
 
+
+        local TradeSkillUIImproved_OptionsCheckBoxRecipeBag = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipeBag', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBag.tooltipText = L["Change the color of an icon if the item (merchant, auction, bag, bank) is already learned.\n\nA reload is necessary."]
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBagText:SetText(L["Change the color of an icon if the item is already learned."])
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetChecked(TradeSkillUIImprovedDB.options.colorRecipeBag)
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetEnabled(TradeSkillUIImprovedDB.options.colorRecipe)
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetScript('OnClick', function(self)
+            TradeSkillUIImprovedDB.options.colorRecipeBag = self:GetChecked()
+        end)
+
+        local TradeSkillUIImproved_OptionsCheckBoxRecipeBank = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipeBank', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBank.tooltipText = L["Change the color of an icon if the item (merchant, auction, bag, bank) is already learned.\n\nA reload is necessary."]
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBankText:SetText(L["Change the color of an icon if the item is already learned."])
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetChecked(TradeSkillUIImprovedDB.options.colorRecipeBank)
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetEnabled(TradeSkillUIImprovedDB.options.colorRecipe)
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetScript('OnClick', function(self)
+            TradeSkillUIImprovedDB.options.colorRecipeBank = self:GetChecked()
+        end)
+
         local TradeSkillUIImproved_OptionsCheckBoxRecipe = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipe', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
         TradeSkillUIImproved_OptionsCheckBoxRecipe:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxAuctionator, 'BOTTOMLEFT', 0, -3)
         TradeSkillUIImproved_OptionsCheckBoxRecipe.tooltipText = L["Change the color of an icon if the item (merchant, auction, bag, bank) is already learned.\n\nA reload is necessary."]
@@ -222,12 +253,17 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
         TradeSkillUIImproved_OptionsCheckBoxRecipe:SetChecked(TradeSkillUIImprovedDB.options.colorRecipe)
         TradeSkillUIImproved_OptionsCheckBoxRecipe:SetScript('OnClick', function(self)
             TradeSkillUIImprovedDB.options.colorRecipe = self:GetChecked()
+            TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetEnabled(self:GetChecked())
+            TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetEnabled(self:GetChecked())
         end)
+
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipe, 'BOTTOMLEFT', 10, -3)
+        TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipeBag, 'BOTTOMLEFT', 0, -3)
 
         local TradeSkillUIImproved_OptionsSliderSize = CreateFrame('Slider', 'TradeSkillUIImproved_OptionsSliderSize', TradeSkillUIImproved, 'OptionsSliderTemplate')
         TradeSkillUIImproved_OptionsSliderSize:SetWidth(585)
         TradeSkillUIImproved_OptionsSliderSize:SetHeight(13)
-        TradeSkillUIImproved_OptionsSliderSize:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipe, 'BOTTOMLEFT', 0, -15)
+        TradeSkillUIImproved_OptionsSliderSize:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipeBank, 'BOTTOMLEFT', 0, -15)
         TradeSkillUIImproved_OptionsSliderSize.tooltipText = L["Allow to change the factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."]
         TradeSkillUIImproved_OptionsSliderSize:SetValueStep(1)
         TradeSkillUIImproved_OptionsSliderSize:SetMinMaxValues(27, 65)
