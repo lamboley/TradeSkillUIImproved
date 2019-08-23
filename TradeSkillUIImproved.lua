@@ -23,10 +23,8 @@ local TradeSkillFrame, DetailsFrame, FilterButton, RankFrame, SearchBox, RecipeL
     = TradeSkillFrame, TradeSkillFrame.DetailsFrame, TradeSkillFrame.FilterButton, TradeSkillFrame.RankFrame, TradeSkillFrame.SearchBox, TradeSkillFrame.RecipeList
 local IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, GetMerchantNumItems
     = IsAddOnLoaded, GetContainerItemLink, FauxScrollFrame_GetOffset, GetMerchantNumItems
-local SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
-    = SetItemButtonTextureVertexColor, SetItemButtonNormalTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
-local SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
-    = SetItemButtonNameFrameVertexColor, SetItemButtonSlotVertexColor
+local SetItemButtonTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
+    = SetItemButtonTextureVertexColor, GetNumAuctionItems, GetAuctionItemLink, MerchantFrame, GetMerchantItemLink
 
 local addonVersion = GetAddOnMetadata(addonName, 'Version')
 
@@ -185,7 +183,6 @@ TradeSkillUIImproved:SetScript('OnEvent', function(_, event)
             hooksecurefunc('AuctionFrameBrowse_Update', function()
                 local numBatchAuctions = GetNumAuctionItems("list")
                 local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
-                local indexItem, buttonTexture
 
                 for i = 1, NUM_BROWSE_TO_DISPLAY do
                     local indexItem = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
