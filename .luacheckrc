@@ -64,4 +64,10 @@ globals = {
         "TradeSkillUIImproved_OptionsCheckBoxRecipeText",
         "TradeSkillUIImproved_OptionsCheckBoxRecipeBagText",
         "TradeSkillUIImproved_OptionsCheckBoxRecipeBankText",
+        "C_PetJournal",
+        "strsplit",
+        "ContainerFrame_UpdateAll",
+        "TradeSkillUIImproved_Print",
+        "TradeSkillUIImproved_IsInTable",
+        "TradeSkillUIImproved_CreateInterfaceOptions",
 }
