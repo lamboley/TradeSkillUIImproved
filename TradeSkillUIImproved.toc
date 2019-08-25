@@ -10,3 +10,5 @@
 ## Dependencies: Blizzard_TradeSkillUI, Blizzard_AuctionUI
 localization\localization.xml
 TradeSkillUIImproved.lua
+TradeSkillUIImprovedOptions.lua
+TradeSkillUIImprovedSlashCmd.lua

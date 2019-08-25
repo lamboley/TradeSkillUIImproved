@@ -1,4 +1,6 @@
-local _, L = ...
+local _, addon = ...
+
+local L = addon.L
 
 if GetLocale() == "zhTW" then
     L["A reload is |cffffff00necessary|r."] = "|cffffff00需要|r介面重載。"
@@ -31,3 +33,5 @@ if GetLocale() == "zhTW" then
     L["The selected recipeID is"] = "選擇的配方ID是"
     L["The version of the addon is"] = "此插件的版本為"
 end
+
+addon.L = L

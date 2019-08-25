@@ -37,7 +37,7 @@ Current supported language :
 ## Bug know
 
 * As v1.0.3 you can hide sub-header (sub-category of expansion) but you should not hide header (category of expansion).
-* The feature for the recipe may have some bug with the bank and the guild due to blizzard fault.
+* The feature for the recipe may have some bug with the bag and the bank due to blizzard fault.
 
 ## Issues
 

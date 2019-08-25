@@ -1,7 +1,9 @@
-local _, L = ...
+local _, addon = ...
 
-local function defaultFunc(_, key)
-    return key
-end
+local L = setmetatable({}, { __index = function(t, k)
+	local v = tostring(k)
+	rawset(t, k, v)
+	return v
+end})
 
-setmetatable(L, {__index=defaultFunc})
+addon.L = L

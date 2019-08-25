@@ -1,4 +1,6 @@
-local _, L = ...
+local _, addon = ...
+
+local L = addon.L
 
 if GetLocale() == "frFR" then
     L["A reload is |cffffff00necessary|r."] = "Un rechargement de l'interface est |cffffff00nécéssaire|r."
@@ -31,3 +33,5 @@ if GetLocale() == "frFR" then
     L["The selected recipeID is"] = "Le recipeID selectionné est"
     L["The version of the addon is"] = "La version de l'addon est"
 end
+
+addon.L = L
