@@ -71,7 +71,7 @@ function TradeSkillUIImproved_CreateInterfaceOptions()
     TradeSkillUIImproved_OptionsSliderSize:SetWidth(585)
     TradeSkillUIImproved_OptionsSliderSize:SetHeight(13)
     TradeSkillUIImproved_OptionsSliderSize:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipeBank, 'BOTTOMLEFT', 0, -15)
-    TradeSkillUIImproved_OptionsSliderSize.tooltipText = L["Allow to change the factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard\"s default is 27.\n\nA reload is necessary."]
+    TradeSkillUIImproved_OptionsSliderSize.tooltipText = L["Allow to change the factor of the size of the tradeskill UI.\n\nDefault is 55 and Blizzard's default is 27.\n\nA reload is necessary."]
     TradeSkillUIImproved_OptionsSliderSize:SetValueStep(1)
     TradeSkillUIImproved_OptionsSliderSize:SetMinMaxValues(27, 65)
     TradeSkillUIImproved_OptionsSliderSizeText:SetText(L["Size factor"])
