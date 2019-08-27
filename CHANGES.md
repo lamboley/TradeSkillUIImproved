@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+1.1.3 (2019-08-27)
+------------------
+
+- Update localization french and traditional chinese
+- Fix error with Pet Cage
+
 1.1.1 (2019-08-23)
 ------------------
 
