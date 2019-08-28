@@ -9,9 +9,12 @@ ignore = {
 globals = {
     -- TradeSkillUIImproved
     "TradeSkillUIImproved",
+    "L",
     "TradeSkillUIImprovedDB",
     "SLASH_TSUII1",
     "SLASH_TSUII2",
+    "TradeSkillUIImproved_CheckButtonHasMaterials",
+    "TradeSkillUIImproved_CheckButtonHasSkillUp",
     "TradeSkillUIImproved_OptionsCheckBoxAuctionatorText",
     "TradeSkillUIImproved_OptionsCheckBoxRecipeText",
     "TradeSkillUIImproved_OptionsCheckBoxRecipeBagText",
@@ -60,6 +63,7 @@ globals = {
     "BrowseScrollFrame",
     "AuctionFrameBrowse",
     "GameMenuFrame",
+    "MerchantFrame",
 
     -- WoW CONSTANT
     "ITEM_SPELL_KNOWN",
