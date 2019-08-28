@@ -1,39 +1,20 @@
-local CreateFrame = CreateFrame
-local GetNumCollectedInfo = GetNumCollectedInfo
-local GetContainerItemLink = GetContainerItemLink
-local GetMerchantNumItems = GetMerchantNumItems
-local GetAuctionItemLink = GetAuctionItemLink
-local FauxScrollFrame_GetOffset = FauxScrollFrame_GetOffset
-local GetNumAuctionItems = GetNumAuctionItems
-local SetItemButtonTextureVertexColor = SetItemButtonTextureVertexColor
-local HybridScrollFrame_CreateButtons = HybridScrollFrame_CreateButtons
-local ContainerFrame_UpdateAll = ContainerFrame_UpdateAll
-local HideUIPanel = HideUIPanel
-local IsCurrentSpell = IsCurrentSpell
-local GetSpellInfo = GetSpellInfo
-local GetProfessions = GetProfessions
-local GetProfessionInfo = GetProfessionInfo
-local IsSpellKnown = IsSpellKnown
-local GetSpellBookItemInfo = GetSpellBookItemInfo
-local C_TradeSkillUI = C_TradeSkillUI
-local CloseTradeSkill = C_TradeSkillUI.CloseTradeSkill
-local IsAddOnLoaded = IsAddOnLoaded
-local GetMerchantItemLink = GetMerchantItemLink
-local InCombatLockdown = InCombatLockdown
-local GetRecipeInfo, GetCategoryInfo = C_TradeSkillUI.GetRecipeInfo, C_TradeSkillUI.GetCategoryInfo
+local CreateFrame, HideUIPanel, C_TradeSkillUI, SetItemButtonTextureVertexColor
+    = CreateFrame, HideUIPanel, C_TradeSkillUI, SetItemButtonTextureVertexColor
+local GetNumCollectedInfo, GetContainerItemLink, GetMerchantNumItems, GetAuctionItemLink, GetMerchantItemLink, GetNumAuctionItems
+    = GetNumCollectedInfo, GetContainerItemLink, GetMerchantNumItems, GetAuctionItemLink, GetMerchantItemLink, GetNumAuctionItems
+local FauxScrollFrame_GetOffset, HybridScrollFrame_CreateButtons, ContainerFrame_UpdateAll
+    = FauxScrollFrame_GetOffset, HybridScrollFrame_CreateButtons, ContainerFrame_UpdateAll
+local GetSpellInfo, GetSpellBookItemInfo, GetProfessions, GetProfessionInfo
+    = GetSpellInfo, GetSpellBookItemInfo, GetProfessions, GetProfessionInfo
+local IsSpellKnown, IsAddOnLoaded, InCombatLockdown, IsCurrentSpell
+    = IsSpellKnown, IsAddOnLoaded, InCombatLockdown, IsCurrentSpell
+local CloseTradeSkill, GetRecipeInfo, GetCategoryInfo
+    = C_TradeSkillUI.CloseTradeSkill, C_TradeSkillUI.GetRecipeInfo, C_TradeSkillUI.GetCategoryInfo
 
 local _G = _G
 
 local index = 0
 local searchText = ''
-
-local runeforgingId = 53428
-local cookingId = 2550
-local firecampId = 818
-local fishingId = 271990
-local fishingPoleId = 131474
-local archaeologyId = 195127
-local digId = 80451
 
 local TradeSkillUIImproved = TradeSkillUIImproved
 local L = TradeSkillUIImproved.L
@@ -41,9 +22,20 @@ local L = TradeSkillUIImproved.L
 local versionString = TradeSkillUIImproved.versionString
 
 local namePrint = TradeSkillUIImproved.namePrint
-local isRecipeIDInTable = TradeSkillUIImproved.isRecipeIDInTable
 
-function TradeSkillUIImproved.AddBlacklist(id)
+local ARCHAEOLOGY_ID = TradeSkillUIImproved.secondaryProfessionID.archaeology
+local RUNEFORGING_ID = TradeSkillUIImproved.secondaryProfessionID.runeForging
+
+function TradeSkillUIImproved.isRecipeIDInTable(list, id)
+    for i, l in pairs(list) do
+        if l.recipeID == id then
+            return i
+        end
+    end
+    return false
+end
+
+function TradeSkillUIImproved:AddBlacklist(id)
     local recipeInfo = {}
     GetRecipeInfo(id, recipeInfo)
 
@@ -51,7 +43,7 @@ function TradeSkillUIImproved.AddBlacklist(id)
         GetCategoryInfo(id, recipeInfo)
     end
 
-    if isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, id) then
+    if self.isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, id) then
         namePrint(L["The recipeID"] .. ' |cffffff00' .. id .. '|r ' .. L["is already in the blacklist."])
     else
         table.insert(TradeSkillUIImprovedDB.BlackList, { recipeID = (recipeInfo.recipeID or recipeInfo.categoryID), name = recipeInfo.name })
@@ -59,8 +51,8 @@ function TradeSkillUIImproved.AddBlacklist(id)
     end
 end
 
-function TradeSkillUIImproved.DellBlacklist(id)
-    local idElement = isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, id)
+function TradeSkillUIImproved:DellBlacklist(id)
+    local idElement = self.isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, id)
 
     if idElement then
         table.remove(TradeSkillUIImprovedDB.BlackList, idElement)
@@ -94,8 +86,8 @@ function TradeSkillUIImproved.ShowBlacklist(pattern)
     end
 end
 
-function TradeSkillUIImproved.IsBlacklisted(id)
-    if isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, tonumber(id)) then
+function TradeSkillUIImproved:IsBlacklisted(id)
+    if self.isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, tonumber(id)) then
         namePrint(L["The recipeID"] .. ' |cffffff00' .. id .. '|r ' .. L["is in the blacklist."])
     else
         namePrint(L["The recipeID"] .. ' |cffffff00' .. id .. '|r ' .. L["isn't in the blacklist."])
@@ -121,13 +113,13 @@ function SlashCmdList.TSUII(msg)
     local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)")
 
     if cmd == 'add' and args ~= '' then
-        TradeSkillUIImproved.AddBlacklist(tonumber(args))
+        TradeSkillUIImproved:AddBlacklist(tonumber(args))
     elseif cmd == 'del' and args ~= '' then
-        TradeSkillUIImproved.DellBlacklist(tonumber(args))
+        TradeSkillUIImproved:DellBlacklist(tonumber(args))
     elseif cmd == 'show' then
         TradeSkillUIImproved.ShowBlacklist(args)
     elseif cmd == 'is' and args ~= '' then
-        TradeSkillUIImproved.IsBlacklisted(args)
+        TradeSkillUIImproved:IsBlacklisted(args)
     elseif cmd == 'version' then
         TradeSkillUIImproved.ShowVersion()
     elseif cmd == 'options' then
@@ -135,6 +127,15 @@ function SlashCmdList.TSUII(msg)
     else
         TradeSkillUIImproved.ShowHelp()
     end
+end
+
+function TradeSkillUIImproved:isSecondaryProfession(id)
+    for _, l in pairs(self.secondaryProfessionID) do
+        if l == id then
+            return true
+        end
+    end
+    return false
 end
 
 local function ParseTextGameToolTip(itemLink, changeVertexColor)
@@ -166,7 +167,7 @@ end
 local function IsCurrentTab(self)
     if self.tooltip and IsCurrentSpell(self.tooltip) then
         self:SetChecked(true)
-        if self.id == archaeologyId then
+        if self.id == ARCHAEOLOGY_ID then
             self:RegisterForClicks('AnyDown')
         else
             self:RegisterForClicks(nil)
@@ -190,7 +191,7 @@ local function FactoryCheckButton(id)
     tab.id = spellID
 
     tab:SetNormalTexture(icon)
-    if spellID == cookingId or spellID == firecampId or spellID == fishingId or spellID == fishingPoleId or spellID == archaeologyId or spellID == digId or spellID == runeforgingId then
+    if TradeSkillUIImproved:isSecondaryProfession(spellID) then
         tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1.5))
     else
         tab:SetPoint('TOPLEFT', TradeSkillFrame, 'TOPRIGHT', 0, (-44 * index) + (-40 * 1))
@@ -342,8 +343,8 @@ eventFrame:SetScript('OnEvent', function(_, event)
             index = 0
 
             local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
-            for _, id in pairs({prof1, prof2, cooking, archaeology, fishing, (IsSpellKnown(runeforgingId) and runeforgingId or nil)}) do
-                if id == runeforgingId then
+            for _, id in pairs({prof1, prof2, cooking, archaeology, fishing, (IsSpellKnown(RUNEFORGING_ID) and RUNEFORGING_ID or nil)}) do
+                if id == RUNEFORGING_ID then
                     FactoryCheckButton(id, index)
                 else
                     local _, _, _, _, numAbilities, spellOffset = GetProfessionInfo(id)
@@ -364,7 +365,7 @@ eventFrame:SetScript('OnEvent', function(_, event)
     elseif event == 'ARCHAEOLOGY_CLOSED' then -- Fix the highlight of Archaeology when the frame is not closed with the checkbox tab frame.
         for i = 1, index do
             local tab = _G['TradeSkillUIImprovedTab' .. i]
-            if tab and tab.id == archaeologyId then
+            if tab and tab.id == ARCHAEOLOGY_ID then
                 tab:SetChecked(false)
             end
         end
@@ -389,10 +390,10 @@ end)
 hooksecurefunc(TradeSkillFrame.RecipeList, 'RebuildDataList', function(self)
     if type(TradeSkillUIImprovedDB.BlackList) == 'table' and #TradeSkillUIImprovedDB.BlackList > 0 then
         for i, listData in ipairs(self.dataList) do
-            if listData.type == 'recipe' and isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, listData.recipeID) then
+            if listData.type == 'recipe' and TradeSkillUIImproved.isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, listData.recipeID) then
                 table.remove(self.dataList, i)
             end
-            if listData.type == 'subheader' and isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, listData.categoryID) then
+            if listData.type == 'subheader' and TradeSkillUIImproved.isRecipeIDInTable(TradeSkillUIImprovedDB.BlackList, listData.categoryID) then
                 for subI, subListData in ipairs(self.dataList) do
                     if subListData.type == 'subheader' and subListData.parentCategoryID == listData.categoryID then
                         table.remove(self.dataList, subI)
