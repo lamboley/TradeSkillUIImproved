@@ -5,12 +5,11 @@ exclude_files = {
 }
 ignore = {
     "211/L", -- Unused local variable "L"
-	"43.", -- Shadowing an upvalue, an upvalue argument, an upvalue loop variable.
+    "43.", -- Shadowing an upvalue, an upvalue argument, an upvalue loop variable.
 }
 globals = {
     -- TradeSkillUIImproved
     "TradeSkillUIImproved",
-    "L",
     "TradeSkillUIImprovedDB",
     "SLASH_TSUII1",
     "SLASH_TSUII2",
