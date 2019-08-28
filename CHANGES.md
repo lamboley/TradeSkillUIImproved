@@ -14,7 +14,7 @@ Changelog
 
 - Add interface options
 - Remove getSize and setSize slash command.
-- Add feature for coloring recipe in yallow if already know.
+- Add feature for coloring recipe in yellow if already know.
 - Add active spell of profession as tab frame.
 - Add traditional chinese localization
 

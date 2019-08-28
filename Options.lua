@@ -1,28 +1,31 @@
-local addonName, addon = ...
-local L = addon.L
+local CreateFrame, InterfaceOptionsFrame_OpenToCategory = CreateFrame, InterfaceOptionsFrame_OpenToCategory
 
-local TradeSkillUIImproved = addon.frame
-TradeSkillUIImproved.name = addonName
+local TradeSkillUIImproved = TradeSkillUIImproved
+local L = TradeSkillUIImproved.L
 
-local function TradeSkillUIImproved_SetTextColor(c)
-    TradeSkillUIImproved_OptionsCheckBoxRecipeBankText:SetText('|cff' .. c .. L["Change the color in the bank."] .. '|r')
-    TradeSkillUIImproved_OptionsCheckBoxRecipeBagText:SetText('|cff' .. c .. L["Change the color in the bag."] .. '|r')
-end
+local namePrint = TradeSkillUIImproved.namePrint
 
-local function TradeSkillUIImproved_EnableCheckColor(self)
-    if self:GetChecked() then
-        TradeSkillUIImproved_SetTextColor('ffffff')
+local addonName = TradeSkillUIImproved.addonName
+
+local function ChangeColorText(frameParent, frameColor, text)
+    if frameParent:GetChecked() then
+        frameColor:SetText('|cffffffff' .. text .. '|r')
     else
-        TradeSkillUIImproved_SetTextColor('7a7a7a')
+        frameColor:SetText('|cff7a7a7a' ..  text .. '|r')
     end
 end
 
-function TradeSkillUIImproved_CreateInterfaceOptions()
-    local TradeSkillUIImproved_OptionsTitle = TradeSkillUIImproved:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
+function TradeSkillUIImproved:CreateInterfaceOptions()
+    local TradeSkillUIImproved_OptionsFrame = CreateFrame('Frame')
+    self.optionFrame = TradeSkillUIImproved_OptionsFrame
+
+    TradeSkillUIImproved_OptionsFrame.name = addonName
+
+    local TradeSkillUIImproved_OptionsTitle = TradeSkillUIImproved_OptionsFrame:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
     TradeSkillUIImproved_OptionsTitle:SetPoint('TOPLEFT', 16, -16)
     TradeSkillUIImproved_OptionsTitle:SetText(addonName)
 
-    local TradeSkillUIImproved_OptionsCheckBoxAuctionator = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxAuctionator', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+    local TradeSkillUIImproved_OptionsCheckBoxAuctionator = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxAuctionator', TradeSkillUIImproved_OptionsFrame, 'InterfaceOptionsCheckButtonTemplate')
     TradeSkillUIImproved_OptionsCheckBoxAuctionator:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsTitle, 'BOTTOMLEFT', 0, -5)
     TradeSkillUIImproved_OptionsCheckBoxAuctionator.tooltipText = L["The addon Auctionator had a button in the tradeskill UI. This options allow you to hide that button.\n\nA reload is necessary."]
     TradeSkillUIImproved_OptionsCheckBoxAuctionatorText:SetText(L["Hide the AH button if the addon Auctionator is loaded."])
@@ -31,7 +34,7 @@ function TradeSkillUIImproved_CreateInterfaceOptions()
         TradeSkillUIImprovedDB.options.hideAuctionator = self:GetChecked()
     end)
 
-    local TradeSkillUIImproved_OptionsCheckBoxRecipeBag = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipeBag', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+    local TradeSkillUIImproved_OptionsCheckBoxRecipeBag = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipeBag', TradeSkillUIImproved_OptionsFrame, 'InterfaceOptionsCheckButtonTemplate')
     TradeSkillUIImproved_OptionsCheckBoxRecipeBag.tooltipText = L["Change the color of an icon if an item in the bag is already learned.\n\nA reload is necessary."]
     TradeSkillUIImproved_OptionsCheckBoxRecipeBagText:SetText(L["Change the color in the bag."])
     TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetChecked(TradeSkillUIImprovedDB.options.colorRecipeBag)
@@ -40,7 +43,7 @@ function TradeSkillUIImproved_CreateInterfaceOptions()
         TradeSkillUIImprovedDB.options.colorRecipeBag = self:GetChecked()
     end)
 
-    local TradeSkillUIImproved_OptionsCheckBoxRecipeBank = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipeBank', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+    local TradeSkillUIImproved_OptionsCheckBoxRecipeBank = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipeBank', TradeSkillUIImproved_OptionsFrame, 'InterfaceOptionsCheckButtonTemplate')
     TradeSkillUIImproved_OptionsCheckBoxRecipeBank.tooltipText = L["Change the color of an icon if an item in the bank is already learned.\n\nA reload is necessary."]
     TradeSkillUIImproved_OptionsCheckBoxRecipeBankText:SetText(L["Change the color in the bank."])
     TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetChecked(TradeSkillUIImprovedDB.options.colorRecipeBank)
@@ -49,7 +52,7 @@ function TradeSkillUIImproved_CreateInterfaceOptions()
         TradeSkillUIImprovedDB.options.colorRecipeBank = self:GetChecked()
     end)
 
-    local TradeSkillUIImproved_OptionsCheckBoxRecipe = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipe', TradeSkillUIImproved, 'InterfaceOptionsCheckButtonTemplate')
+    local TradeSkillUIImproved_OptionsCheckBoxRecipe = CreateFrame('CheckButton', 'TradeSkillUIImproved_OptionsCheckBoxRecipe', TradeSkillUIImproved_OptionsFrame, 'InterfaceOptionsCheckButtonTemplate')
     TradeSkillUIImproved_OptionsCheckBoxRecipe:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxAuctionator, 'BOTTOMLEFT', 0, -3)
     TradeSkillUIImproved_OptionsCheckBoxRecipe.tooltipText = L["Change the color of an icon if the item (merchant, auction, bag, bank) is already learned.\n\nA reload is necessary."]
     TradeSkillUIImproved_OptionsCheckBoxRecipeText:SetText(L["Change the color of an icon if the item is already learned."])
@@ -59,15 +62,17 @@ function TradeSkillUIImproved_CreateInterfaceOptions()
         TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetEnabled(self:GetChecked())
         TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetEnabled(self:GetChecked())
 
-        TradeSkillUIImproved_EnableCheckColor(self)
+        ChangeColorText(self, TradeSkillUIImproved_OptionsCheckBoxRecipeBankText, L["Change the color in the bank."])
+        ChangeColorText(self, TradeSkillUIImproved_OptionsCheckBoxRecipeBagText, L["Change the color in the bag."])
     end)
 
-    TradeSkillUIImproved_EnableCheckColor(TradeSkillUIImproved_OptionsCheckBoxRecipe)
+    ChangeColorText(TradeSkillUIImproved_OptionsCheckBoxRecipe, TradeSkillUIImproved_OptionsCheckBoxRecipeBankText, L["Change the color in the bank."])
+    ChangeColorText(TradeSkillUIImproved_OptionsCheckBoxRecipe, TradeSkillUIImproved_OptionsCheckBoxRecipeBagText, L["Change the color in the bag."])
 
     TradeSkillUIImproved_OptionsCheckBoxRecipeBag:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipe, 'BOTTOMLEFT', 10, -3)
     TradeSkillUIImproved_OptionsCheckBoxRecipeBank:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipeBag, 'BOTTOMLEFT', 0, -3)
 
-    local TradeSkillUIImproved_OptionsSliderSize = CreateFrame('Slider', 'TradeSkillUIImproved_OptionsSliderSize', TradeSkillUIImproved, 'OptionsSliderTemplate')
+    local TradeSkillUIImproved_OptionsSliderSize = CreateFrame('Slider', 'TradeSkillUIImproved_OptionsSliderSize', TradeSkillUIImproved_OptionsFrame, 'OptionsSliderTemplate')
     TradeSkillUIImproved_OptionsSliderSize:SetWidth(585)
     TradeSkillUIImproved_OptionsSliderSize:SetHeight(13)
     TradeSkillUIImproved_OptionsSliderSize:SetPoint('TOPLEFT', TradeSkillUIImproved_OptionsCheckBoxRecipeBank, 'BOTTOMLEFT', 0, -15)
@@ -115,5 +120,13 @@ function TradeSkillUIImproved_CreateInterfaceOptions()
 
     TradeSkillUIImproved_OptionsSliderSize:SetValue(TradeSkillUIImprovedDB.options.factor)
 
-    InterfaceOptions_AddCategory(TradeSkillUIImproved)
+    InterfaceOptions_AddCategory(TradeSkillUIImproved_OptionsFrame)
+end
+
+function TradeSkillUIImproved:OpenOptions()
+    local optionFrame = self.optionFrame
+
+    -- We call it twice because of a bug of blizzard
+    InterfaceOptionsFrame_OpenToCategory(optionFrame)
+    InterfaceOptionsFrame_OpenToCategory(optionFrame)
 end

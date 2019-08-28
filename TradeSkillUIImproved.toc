@@ -1,14 +1,20 @@
 ## Interface: 80200
 ## Title: TradeSkillUIImproved
 ## Author: LAMBOLEY Lucas
-## Version: 1.1.1
+## Version: 1.1.3
 ## Notes: Improve the default TradeSkill UI.
 ## Notes-frFR: Améliore l'interface des métiers.
 ## X-Website: https://www.curseforge.com/wow/addons/tradeskilluiimproved
 ## X-Curse-Project-ID: 331728
 ## SavedVariables: TradeSkillUIImprovedDB
 ## Dependencies: Blizzard_TradeSkillUI, Blizzard_AuctionUI
-localization\localization.xml
-TradeSkillUIImproved.lua
-TradeSkillUIImprovedOptions.lua
-TradeSkillUIImprovedSlashCmd.lua
+Initialize.lua
+locales.xml
+
+Core.lua
+Options.lua
+
+UI\MoveBar.lua
+UI\CollapseButton.lua
+UI\HasCheckButton.lua
+UI\RecipeIDButton.lua
