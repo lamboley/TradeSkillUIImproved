@@ -4,7 +4,7 @@ exclude_files = {
         ".luacheckrc"
 }
 globals = {
-        "IsAddOnLoade",
+        "IsAddOnLoaded",
         "Auctionator_Search",
         "TradeSkillUIImprovedDB",
         "UIPanelWindows",
