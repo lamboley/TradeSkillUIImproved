@@ -1,4 +1,14 @@
-TradeSkillUIImproved = {}
+TradeSkillUIImproved = {
+    secondaryProfessionID = {
+        runeForging = 53428,
+        cooking = 2550,
+        firecamp = 818,
+        fishing = 271990,
+        pole = 131474,
+        archaeology = 195127,
+        dig = 80451,
+    },
+}
 TradeSkillUIImproved.L = {}
 
 TradeSkillUIImproved.versionString = GetAddOnMetadata('TradeSkillUIImproved', 'Version')
@@ -6,15 +16,6 @@ TradeSkillUIImproved.addonName = GetAddOnMetadata('TradeSkillUIImproved', 'Title
 
 TradeSkillUIImproved.namePrint = function(msg)
     print('|cff00ff00TSUII:|r' .. msg)
-end
-
-TradeSkillUIImproved.isRecipeIDInTable = function(list, id)
-    for i, l in pairs(list) do
-        if l.recipeID == id then
-            return i
-        end
-    end
-    return false
 end
 
 function TradeSkillUIImproved.InitializeDB()
