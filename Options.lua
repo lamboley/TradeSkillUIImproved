@@ -3,8 +3,6 @@ local CreateFrame, InterfaceOptionsFrame_OpenToCategory = CreateFrame, Interface
 local TradeSkillUIImproved = TradeSkillUIImproved
 local L = TradeSkillUIImproved.L
 
-local namePrint = TradeSkillUIImproved.namePrint
-
 local addonName = TradeSkillUIImproved.addonName
 
 local function ChangeColorText(frameParent, frameColor, text)

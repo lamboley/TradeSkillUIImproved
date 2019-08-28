@@ -15,7 +15,11 @@ local GetProfessions = GetProfessions
 local GetProfessionInfo = GetProfessionInfo
 local IsSpellKnown = IsSpellKnown
 local GetSpellBookItemInfo = GetSpellBookItemInfo
+local C_TradeSkillUI = C_TradeSkillUI
 local CloseTradeSkill = C_TradeSkillUI.CloseTradeSkill
+local IsAddOnLoaded = IsAddOnLoaded
+local GetMerchantItemLink = GetMerchantItemLink
+local InCombatLockdown = InCombatLockdown
 local GetRecipeInfo, GetCategoryInfo = C_TradeSkillUI.GetRecipeInfo, C_TradeSkillUI.GetCategoryInfo
 
 local _G = _G
