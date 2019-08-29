@@ -20,6 +20,10 @@ TradeSkillUIImproved improve the default tradeskill UI. His major feature allow 
 * Add a system of blacklist of recipe and sub-header for hidding them in the tradeskill UI.
 * Change the color of an icon in yellow in a merchant, auction house, bag and bank if you have already know it.
 
+## Upcoming feature
+
+* A queue system for crafting multiple type of item.
+
 ## Documentation
 
 For more documentation, take a look at the [wiki](https://github.com/lamboley/TradeSkillUIImproved/wiki) page.

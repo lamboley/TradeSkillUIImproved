@@ -3,6 +3,13 @@ Changelog
 =========
 
 
+1.1.4 (2019-08-29)
+------------------
+
+- Fix the version string in toc file.
+- Delete substring 'BL' in slash command because I am lazy.
+- Use POO for maintability
+
 1.1.3 (2019-08-27)
 ------------------
 
